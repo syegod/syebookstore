@@ -15,6 +15,8 @@ public class ClientSdk implements AutoCloseable {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ClientSdk.class);
 
+  private String jwtToken;
+
   private final JsonMapper objectMapper = JsonMappers.jsonMapper();
   private final HttpClient client;
 
@@ -24,17 +26,25 @@ public class ClientSdk implements AutoCloseable {
 
   private <T> T sendRequest(String name, Object data, Class<T> responseType) {
     try {
-      final var request =
+      final var requestBuilder =
           HttpRequest.newBuilder()
-              .uri(URI.create("http://localhost:8080/v1/syebookstore/" + name))
+              .uri(URI.create("http://localhost:8080/v1/" + name))
               .header("Content-Type", "application/json")
-              .POST(BodyPublishers.ofString(objectMapper.writeValueAsString(data)))
-              .build();
+              .POST(BodyPublishers.ofString(objectMapper.writeValueAsString(data)));
+
+      if (jwtToken != null) {
+        requestBuilder.header("Authorization", jwtToken);
+      }
+      final var request = requestBuilder.build();
 
       final var response = client.send(request, BodyHandlers.ofString());
 
       final var statusCode = response.statusCode();
       if (statusCode == 200) {
+        if (responseType.isAssignableFrom(String.class)) {
+          //noinspection unchecked
+          return (T) response.body();
+        }
         return objectMapper.readValue(response.body(), responseType);
       }
       if (statusCode == 204) {
@@ -69,6 +79,15 @@ public class ClientSdk implements AutoCloseable {
               LOGGER.debug("Send: {}", data);
               return sendRequest(name, data, returnType);
             });
+  }
+
+  public String jwtToken() {
+    return jwtToken;
+  }
+
+  public ClientSdk jwtToken(String jwtToken) {
+    this.jwtToken = jwtToken;
+    return this;
   }
 
   private Object toStringOrEqualsOrHashCode(String method, Class<?> api, Object... args) {

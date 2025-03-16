@@ -32,13 +32,9 @@ public class AppConfiguration implements AutoCloseable {
   }
 
   public void close() {
-    try {
-      if (context != null) {
-        context.close();
-        LOGGER.info("Jetty server stopped.");
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
+    if (context != null) {
+      context.close();
+      LOGGER.info("Jetty server stopped");
     }
   }
 }

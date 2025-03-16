@@ -14,4 +14,7 @@ public interface AccountSdk {
   AccountInfo updateAccount(UpdateAccountRequest updateAccountRequest);
 
   AccountInfo getAccount(Long accountId);
+
+  void deleteAccount(String password);
+
 }
