@@ -1,12 +1,10 @@
 package io.syebookstore;
 
 import java.util.StringJoiner;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties
 public class ServiceConfig {
 
-  private int port;
+  private int port = 8080;
   private String dbUrl;
   private String dbUsername;
   private String dbPassword;

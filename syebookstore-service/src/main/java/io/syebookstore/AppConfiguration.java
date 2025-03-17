@@ -1,9 +1,5 @@
 package io.syebookstore;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import jakarta.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner.Mode;
@@ -11,12 +7,10 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
-
+import org.springframework.context.support.GenericApplicationContext;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-@EnableConfigurationProperties(ServiceConfig.class)
 public class AppConfiguration implements AutoCloseable {
 
   public static final Logger LOGGER = LoggerFactory.getLogger(AppConfiguration.class);
@@ -32,9 +26,16 @@ public class AppConfiguration implements AutoCloseable {
   public void start() {
     context =
         new SpringApplicationBuilder(AppConfiguration.class)
+            .initializers(
+                applicationContext -> {
+                  final var genericApplicationContext =
+                      (GenericApplicationContext) applicationContext;
+                  genericApplicationContext.registerBean(
+                      ServiceConfig.class, () -> serviceConfig, bd -> {});
+                })
             .web(WebApplicationType.SERVLET)
             .bannerMode(Mode.OFF)
-            .properties("server.port"+serviceConfig.port())
+            .properties("server.port=" + serviceConfig.port())
             .run();
   }
 
