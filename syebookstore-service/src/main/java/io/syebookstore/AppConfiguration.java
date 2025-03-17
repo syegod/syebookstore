@@ -1,13 +1,19 @@
 package io.syebookstore;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import jakarta.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
+
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableConfigurationProperties(ServiceConfig.class)
@@ -27,7 +33,8 @@ public class AppConfiguration implements AutoCloseable {
     context =
         new SpringApplicationBuilder(AppConfiguration.class)
             .web(WebApplicationType.SERVLET)
-            .properties("server.port=" + serviceConfig.port())
+            .bannerMode(Mode.OFF)
+            .properties("server.port"+serviceConfig.port())
             .run();
   }
 

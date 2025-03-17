@@ -1,6 +1,7 @@
 package io.syebookstore.api.account;
 
 import static io.syebookstore.api.ErrorAssertions.assertError;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
@@ -135,5 +136,20 @@ public class CreateAccountIT {
   @Test
   void testCreateAccountLoggedIn() {
     fail("Implement");
+  }
+
+  @Test
+  void testCreateAccount(ClientSdk clientSdk) {
+    final var username = randomAlphanumeric(10);
+    final var email = randomAlphanumeric(10);
+    final var token = clientSdk
+        .accountSdk()
+        .createAccount(
+            new CreateAccountRequest()
+                .username(username)
+                .email(email)
+                .password(randomAlphanumeric(10)));
+    clientSdk.jwtToken(token);
+    clientSdk.accountSdk().getAccount(null);
   }
 }

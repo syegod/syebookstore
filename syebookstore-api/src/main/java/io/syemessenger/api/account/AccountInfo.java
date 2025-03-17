@@ -4,8 +4,18 @@ import java.util.StringJoiner;
 
 public class AccountInfo {
 
+  private Long id;
   private String username;
   private String email;
+
+  public Long id() {
+    return id;
+  }
+
+  public AccountInfo id(Long id) {
+    this.id = id;
+    return this;
+  }
 
   public String username() {
     return username;
@@ -28,6 +38,7 @@ public class AccountInfo {
   @Override
   public String toString() {
     return new StringJoiner(", ", AccountInfo.class.getSimpleName() + "[", "]")
+        .add("id=" + id)
         .add("username='" + username + "'")
         .add("email='" + email + "'")
         .toString();

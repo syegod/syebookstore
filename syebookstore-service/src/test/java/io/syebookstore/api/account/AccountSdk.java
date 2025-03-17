@@ -7,14 +7,14 @@ import io.syemessenger.api.account.UpdateAccountRequest;
 
 public interface AccountSdk {
 
-  String createAccount(CreateAccountRequest createAccountRequest);
+  String createAccount(CreateAccountRequest request);
 
   String login(LoginRequest loginRequest);
 
-  AccountInfo updateAccount(UpdateAccountRequest updateAccountRequest);
+  AccountInfo updateAccount(UpdateAccountRequest request);
 
   AccountInfo getAccount(Long accountId);
 
-  void deleteAccount(String password);
+  Void deleteAccount(String password);
 
 }

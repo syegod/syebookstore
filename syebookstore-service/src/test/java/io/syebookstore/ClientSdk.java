@@ -42,6 +42,9 @@ public class ClientSdk implements AutoCloseable {
 
       final var statusCode = response.statusCode();
       if (statusCode == 200) {
+        if (responseType.isAssignableFrom(Void.class)) {
+          return null;
+        }
         if (responseType.isAssignableFrom(String.class)) {
           //noinspection unchecked
           return (T) response.body();
