@@ -1,0 +1,57 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.16.xsd">
+
+  <changeSet id="1" author="Oleh Vysochyn">
+    <sql>CREATE TYPE AccountStatus as ENUM ('CONFIRMED', 'NON_CONFIRMED', 'DEACTIVATED')</sql>
+  </changeSet>
+
+  <changeSet id="2" author="Oleh Vysochyn">
+    <createTable tableName="accounts">
+      <column name="id" type="bigserial">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="username" type="varchar"/>
+      <column name="email" type="varchar"/>
+      <column name="password_hash" type="varchar"/>
+      <column name="status" type="AccountStatus"/>
+      <column name="description" type="varchar"/>
+      <column name="created_at" type="timestamp without timezone"/>
+      <column name="updated_at" type="timestamp without timezone"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="3" author="Oleh Vysochyn">
+    <createTable tableName="books">
+      <column name="isbn" type="varchar">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="title" type="varchar"/>
+      <column name="authors" type="varchar[]"/>
+      <column name="description" type="varchar"/>
+      <column name="content" type="bytea"/>
+      <column name="tags" type="varchar[]"/>
+      <column name="publication_date" type="date"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="4" author="Oleh Vysochyn">
+    <createTable tableName="reviews">
+      <column name="id" type="bigserial">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="account_id" type="bigint">
+        <constraints nullable="false" foreignKeyName="fk_review_author" references="accounts(id)"/>
+      </column>
+      <column name="book_id" type="varchar">
+        <constraints nullable="false" foreignKeyName="fk_review_book" references="books(isbn)"/>
+      </column>
+      <column name="rating" type="int"/>
+      <column name="message" type="varchar"/>
+      <column name="created_at" type="timestamp without timezone"/>
+      <column name="updated_at" type="timestamp without timezone"/>
+    </createTable>
+  </changeSet>
+
+</databaseChangeLog>

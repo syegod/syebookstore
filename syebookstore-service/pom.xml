@@ -59,7 +59,6 @@
       <artifactId>jackson-datatype-jsr310</artifactId>
     </dependency>
 
-
     <!-- Postgres -->
     <dependency>
       <groupId>org.postgresql</groupId>
