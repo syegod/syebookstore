@@ -1,6 +1,7 @@
 package io.syebookstore;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.syebookstore.api.account.AccountSdk;
 import io.syemessenger.api.ServiceException;
 import java.lang.reflect.Proxy;
 import java.net.URI;
@@ -52,9 +53,12 @@ public class ClientSdk implements AutoCloseable {
       }
 
       throw new ServiceException(statusCode, response.body());
+    } catch (ServiceException ex) {
+     throw ex;
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+
   }
 
   public <T> T api(Class<T> api) {
@@ -79,6 +83,10 @@ public class ClientSdk implements AutoCloseable {
               LOGGER.debug("Send: {}", data);
               return sendRequest(name, data, returnType);
             });
+  }
+
+  public AccountSdk accountSdk() {
+    return api(AccountSdk.class);
   }
 
   public String jwtToken() {

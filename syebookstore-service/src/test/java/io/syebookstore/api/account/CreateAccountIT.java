@@ -1,14 +1,139 @@
 package io.syebookstore.api.account;
 
+import static io.syebookstore.api.ErrorAssertions.assertError;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+
+import io.syebookstore.ClientSdk;
 import io.syebookstore.environment.IntegrationEnvironmentExtension;
+import io.syemessenger.api.account.CreateAccountRequest;
+import java.util.StringJoiner;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith(IntegrationEnvironmentExtension.class)
 public class CreateAccountIT {
 
-  @Test
-  void testCreateAccountFailed() {
+  @ParameterizedTest()
+  @MethodSource("testCreateAccountFailedMethodSource")
+  void testCreateAccountFailed(FailedArgs args, ClientSdk clientSdk) {
+    try {
+      clientSdk.accountSdk().createAccount(args.request);
+      fail("Expected exception");
+    } catch (Exception ex) {
+      assertError(ex, args.errorCode, args.message);
+    }
+  }
 
+  private record FailedArgs(
+      String test, CreateAccountRequest request, int errorCode, String message) {
+    @Override
+    public String toString() {
+      return new StringJoiner(", ", FailedArgs.class.getSimpleName() + "[", "]")
+          .add("test='" + test + "'")
+          .add("request=" + request)
+          .add("errorCode=" + errorCode)
+          .add("message='" + message + "'")
+          .toString();
+    }
+  }
+
+  static Stream<FailedArgs> testCreateAccountFailedMethodSource() {
+    return Stream.of(
+        new FailedArgs(
+            "All parameters are empty strings",
+            new CreateAccountRequest().username("").email("").password(""),
+            400,
+            "Missing or invalid: username"),
+        new FailedArgs(
+            "All parameters are null",
+            new CreateAccountRequest(),
+            400,
+            "Missing or invalid: username"),
+        new FailedArgs(
+            "No password",
+            new CreateAccountRequest()
+                .username(randomAlphanumeric(8, 65))
+                .email("example@email.com"),
+            400,
+            "Missing or invalid: password"),
+        new FailedArgs(
+            "No username",
+            new CreateAccountRequest()
+                .email("example@email.com")
+                .password(randomAlphanumeric(8, 65)),
+            400,
+            "Missing or invalid: username"),
+        new FailedArgs(
+            "No email",
+            new CreateAccountRequest()
+                .username(randomAlphanumeric(8, 65))
+                .password(randomAlphanumeric(8, 65)),
+            400,
+            "Missing or invalid: email"),
+        new FailedArgs(
+            "Username too short",
+            new CreateAccountRequest()
+                .username(randomAlphanumeric(7))
+                .email(randomAlphanumeric(8, 65))
+                .password(randomAlphanumeric(8, 65)),
+            400,
+            "Missing or invalid: username"),
+        new FailedArgs(
+            "Username too long",
+            new CreateAccountRequest()
+                .username(randomAlphanumeric(80))
+                .email(randomAlphanumeric(8, 65))
+                .password(randomAlphanumeric(8, 65)),
+            400,
+            "Missing or invalid: username"),
+        new FailedArgs(
+            "Wrong email type",
+            new CreateAccountRequest()
+                .username(randomAlphanumeric(8, 65))
+                .email(randomAlphanumeric(8, 65))
+                .password(randomAlphanumeric(8, 65)),
+            400,
+            "Missing or invalid: email"),
+        new FailedArgs(
+            "Email too short",
+            new CreateAccountRequest()
+                .username(randomAlphanumeric(8, 65))
+                .email(randomAlphanumeric(7))
+                .password(randomAlphanumeric(8, 65)),
+            400,
+            "Missing or invalid: email"),
+        new FailedArgs(
+            "Email too long",
+            new CreateAccountRequest()
+                .username(randomAlphanumeric(8, 65))
+                .email(randomAlphanumeric(80))
+                .password(randomAlphanumeric(8, 65)),
+            400,
+            "Missing or invalid: email"),
+        new FailedArgs(
+            "Password too short",
+            new CreateAccountRequest()
+                .username(randomAlphanumeric(8, 65))
+                .email("example@email.com")
+                .password(randomAlphanumeric(7)),
+            400,
+            "Missing or invalid: password"),
+        new FailedArgs(
+            "Password too long",
+            new CreateAccountRequest()
+                .username(randomAlphanumeric(8, 65))
+                .email("example@email.com")
+                .password(randomAlphanumeric(80)),
+            400,
+            "Missing or invalid: password"));
+  }
+
+  @Test
+  void testCreateAccountLoggedIn() {
+    fail("Implement");
   }
 }
