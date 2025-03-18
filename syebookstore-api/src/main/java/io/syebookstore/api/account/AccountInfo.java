@@ -1,5 +1,6 @@
-package io.syemessenger.api.account;
+package io.syebookstore.api.account;
 
+import java.time.LocalDateTime;
 import java.util.StringJoiner;
 
 public class AccountInfo {
@@ -7,6 +8,8 @@ public class AccountInfo {
   private Long id;
   private String username;
   private String email;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
 
   public Long id() {
     return id;
@@ -35,12 +38,32 @@ public class AccountInfo {
     return this;
   }
 
+  public LocalDateTime createdAt() {
+    return createdAt;
+  }
+
+  public AccountInfo createdAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+    return this;
+  }
+
+  public LocalDateTime updatedAt() {
+    return updatedAt;
+  }
+
+  public AccountInfo updatedAt(LocalDateTime updatedAt) {
+    this.updatedAt = updatedAt;
+    return this;
+  }
+
   @Override
   public String toString() {
     return new StringJoiner(", ", AccountInfo.class.getSimpleName() + "[", "]")
         .add("id=" + id)
         .add("username='" + username + "'")
         .add("email='" + email + "'")
+        .add("createdAt=" + createdAt)
+        .add("updatedAt=" + updatedAt)
         .toString();
   }
 }

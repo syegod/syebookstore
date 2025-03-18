@@ -1,7 +1,6 @@
 package io.syebookstore.api.account;
 
-import io.syemessenger.api.ServiceException;
-import io.syemessenger.api.account.CreateAccountRequest;
+import io.syebookstore.api.ServiceException;
 import java.util.regex.Pattern;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +13,12 @@ public class AccountController {
 
   private static final Pattern EMAIL_PATTERN =
       Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+
+  private final AccountService accountService;
+
+  public AccountController(AccountService accountService) {
+    this.accountService = accountService;
+  }
 
   @PostMapping("/createAccount")
   public String createAccount(@RequestBody CreateAccountRequest request) {
@@ -44,6 +49,8 @@ public class AccountController {
     if (password.length() < 8 || password.length() > 64) {
       throw new ServiceException(400, "Missing or invalid: password");
     }
+
+    accountService.createAccount();
 
     return "";
   }

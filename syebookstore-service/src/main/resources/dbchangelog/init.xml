@@ -4,7 +4,7 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.16.xsd">
 
   <changeSet id="1" author="Oleh Vysochyn">
-    <sql>CREATE TYPE AccountStatus as ENUM ('CONFIRMED', 'NON_CONFIRMED', 'DEACTIVATED')</sql>
+    <sql>CREATE TYPE account_status as ENUM ('CONFIRMED', 'NON_CONFIRMED', 'DEACTIVATED')</sql>
   </changeSet>
 
   <changeSet id="2" author="Oleh Vysochyn">
@@ -15,7 +15,7 @@
       <column name="username" type="varchar"/>
       <column name="email" type="varchar"/>
       <column name="password_hash" type="varchar"/>
-      <column name="status" type="AccountStatus"/>
+      <column name="status" type="account_status"/>
       <column name="description" type="varchar"/>
       <column name="created_at" type="timestamp without timezone"/>
       <column name="updated_at" type="timestamp without timezone"/>
@@ -24,15 +24,18 @@
 
   <changeSet id="3" author="Oleh Vysochyn">
     <createTable tableName="books">
-      <column name="isbn" type="varchar">
+      <column name="id" type="bigserial">
         <constraints primaryKey="true"/>
+      </column>
+      <column name="isbn" type="varchar">
+        <constraints unique="true"/>
       </column>
       <column name="title" type="varchar"/>
       <column name="authors" type="varchar[]"/>
       <column name="description" type="varchar"/>
       <column name="content" type="bytea"/>
       <column name="tags" type="varchar[]"/>
-      <column name="publication_date" type="date"/>
+      <column name="publication_year" type="int"/>
     </createTable>
   </changeSet>
 
@@ -44,8 +47,8 @@
       <column name="account_id" type="bigint">
         <constraints nullable="false" foreignKeyName="fk_review_author" references="accounts(id)"/>
       </column>
-      <column name="book_id" type="varchar">
-        <constraints nullable="false" foreignKeyName="fk_review_book" references="books(isbn)"/>
+      <column name="book_id" type="bigint">
+        <constraints nullable="false" foreignKeyName="fk_review_book" references="books(id)"/>
       </column>
       <column name="rating" type="int"/>
       <column name="message" type="varchar"/>

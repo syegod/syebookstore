@@ -3,8 +3,6 @@ package io.syebookstore.api;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-import io.syemessenger.api.ServiceException;
-
 public class ErrorAssertions {
 
   private ErrorAssertions() {}

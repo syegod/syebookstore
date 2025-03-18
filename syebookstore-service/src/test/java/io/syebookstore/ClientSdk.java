@@ -2,7 +2,7 @@ package io.syebookstore;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.syebookstore.api.account.AccountSdk;
-import io.syemessenger.api.ServiceException;
+import io.syebookstore.api.ServiceException;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.net.http.HttpClient;

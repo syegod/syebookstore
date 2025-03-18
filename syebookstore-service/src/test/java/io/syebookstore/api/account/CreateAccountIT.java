@@ -7,7 +7,6 @@ import static org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUti
 
 import io.syebookstore.ClientSdk;
 import io.syebookstore.environment.IntegrationEnvironmentExtension;
-import io.syemessenger.api.account.CreateAccountRequest;
 import java.util.StringJoiner;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -142,14 +141,13 @@ public class CreateAccountIT {
   void testCreateAccount(ClientSdk clientSdk) {
     final var username = randomAlphanumeric(10);
     final var email = randomAlphanumeric(10);
-    final var token = clientSdk
+    final var accountInfo = clientSdk
         .accountSdk()
         .createAccount(
             new CreateAccountRequest()
                 .username(username)
                 .email(email)
                 .password(randomAlphanumeric(10)));
-    clientSdk.jwtToken(token);
     clientSdk.accountSdk().getAccount(null);
   }
 }

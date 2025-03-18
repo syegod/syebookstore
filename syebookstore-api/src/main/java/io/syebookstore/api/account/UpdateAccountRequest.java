@@ -1,4 +1,4 @@
-package io.syemessenger.api.account;
+package io.syebookstore.api.account;
 
 public class UpdateAccountRequest {
 
