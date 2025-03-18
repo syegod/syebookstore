@@ -1,6 +1,8 @@
 package io.syebookstore.environment;
 
 import io.syebookstore.ClientSdk;
+import io.syebookstore.api.account.AccountAssertions;
+import io.syebookstore.api.account.AccountInfo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +39,7 @@ public class IntegrationEnvironmentExtension
 
     PARAMETERS_TO_RESOLVE.put(IntegrationEnvironment.class, () -> environment);
     PARAMETERS_TO_RESOLVE.put(ClientSdk.class, () -> newResource(ClientSdk::new));
+    PARAMETERS_TO_RESOLVE.put(AccountInfo.class, AccountAssertions::createAccount);
   }
 
   @Override

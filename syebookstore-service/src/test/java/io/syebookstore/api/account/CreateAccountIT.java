@@ -1,14 +1,19 @@
 package io.syebookstore.api.account;
 
 import static io.syebookstore.api.ErrorAssertions.assertError;
+import static io.syebookstore.api.account.AccountAssertions.createAccount;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
 import io.syebookstore.ClientSdk;
 import io.syebookstore.environment.IntegrationEnvironmentExtension;
 import java.util.StringJoiner;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,6 +21,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @ExtendWith(IntegrationEnvironmentExtension.class)
 public class CreateAccountIT {
+
+  private static AccountInfo existingAccountInfo;
+
+  @BeforeAll
+  static void beforeAll() {
+    existingAccountInfo = createAccount();
+  }
 
   @ParameterizedTest()
   @MethodSource("testCreateAccountFailedMethodSource")
@@ -129,25 +141,41 @@ public class CreateAccountIT {
                 .email("example@email.com")
                 .password(randomAlphanumeric(80)),
             400,
-            "Missing or invalid: password"));
-  }
-
-  @Test
-  void testCreateAccountLoggedIn() {
-    fail("Implement");
+            "Missing or invalid: password"),
+        new FailedArgs(
+            "Username already exists",
+            new CreateAccountRequest()
+                .username(existingAccountInfo.username())
+                .email("example@email.com")
+                .password(randomAlphanumeric(8, 65)),
+            400,
+            "Cannot create account: already exists"),
+        new FailedArgs(
+            "Email already exists",
+            new CreateAccountRequest()
+                .username(randomAlphanumeric(8, 65))
+                .email(existingAccountInfo.email())
+                .password(randomAlphanumeric(8, 65)),
+            400,
+            "Cannot create account: already exists"));
   }
 
   @Test
   void testCreateAccount(ClientSdk clientSdk) {
     final var username = randomAlphanumeric(10);
-    final var email = randomAlphanumeric(10);
-    final var accountInfo = clientSdk
-        .accountSdk()
-        .createAccount(
-            new CreateAccountRequest()
-                .username(username)
-                .email(email)
-                .password(randomAlphanumeric(10)));
-    clientSdk.accountSdk().getAccount(null);
+    final var email =
+        randomAlphanumeric(4) + "@" + randomAlphabetic(2, 10) + "." + randomAlphabetic(2, 10);
+    final var accountInfo =
+        clientSdk
+            .accountSdk()
+            .createAccount(
+                new CreateAccountRequest()
+                    .username(username)
+                    .email(email)
+                    .password(randomAlphanumeric(10)));
+    assertEquals(username, accountInfo.username(), "username");
+    assertEquals(email, accountInfo.email(), "email");
+    assertNotNull(accountInfo.createdAt(), "createdAt");
+    assertTrue(accountInfo.id() > 0, "accountInfo.id: " + accountInfo.id());
   }
 }

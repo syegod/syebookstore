@@ -2,6 +2,7 @@ package io.syebookstore.api.account.repository;
 
 import io.syebookstore.LocalDateTimeConverter;
 import io.syebookstore.api.account.AccountStatus;
+import io.syebookstore.api.account.AccountStatusConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -28,7 +29,7 @@ public class Account {
   @Column(name = "password_hash")
   private String passwordHash;
 
-  @Enumerated(EnumType.STRING)
+  @Convert(converter = AccountStatusConverter.class)
   private AccountStatus status;
 
   @Column(name = "created_at")

@@ -12,8 +12,12 @@
       <column name="id" type="bigserial">
         <constraints primaryKey="true"/>
       </column>
-      <column name="username" type="varchar"/>
-      <column name="email" type="varchar"/>
+      <column name="username" type="varchar">
+        <constraints unique="true"/>
+      </column>
+      <column name="email" type="varchar">
+        <constraints unique="true"/>
+      </column>
       <column name="password_hash" type="varchar"/>
       <column name="status" type="account_status"/>
       <column name="description" type="varchar"/>

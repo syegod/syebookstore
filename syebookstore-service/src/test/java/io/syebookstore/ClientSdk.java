@@ -64,7 +64,7 @@ public class ClientSdk implements AutoCloseable {
 
   }
 
-  public <T> T api(Class<T> api) {
+  private <T> T api(Class<T> api) {
     if (!api.isInterface()) {
       throw new IllegalArgumentException("Must be interface: " + api);
     }

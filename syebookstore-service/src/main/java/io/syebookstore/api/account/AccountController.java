@@ -1,7 +1,11 @@
 package io.syebookstore.api.account;
 
+import static io.syebookstore.api.account.AccountMappers.toAccountInfo;
+
 import io.syebookstore.api.ServiceException;
+import io.syebookstore.api.account.repository.Account;
 import java.util.regex.Pattern;
+import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +25,7 @@ public class AccountController {
   }
 
   @PostMapping("/createAccount")
-  public String createAccount(@RequestBody CreateAccountRequest request) {
+  public AccountInfo createAccount(@RequestBody CreateAccountRequest request) {
     final var username = request.username();
     if (username == null) {
       throw new ServiceException(400, "Missing or invalid: username");
@@ -50,9 +54,17 @@ public class AccountController {
       throw new ServiceException(400, "Missing or invalid: password");
     }
 
-    accountService.createAccount();
+    Account account;
+    try {
+      account = accountService.createAccount(request);
+    } catch (DataAccessException e) {
+      if (e.getMessage().contains("duplicate key value violates unique constraint")) {
+        throw new ServiceException(400, "Cannot create account: already exists");
+      }
+      throw e;
+    }
 
-    return "";
+    return toAccountInfo(account);
   }
 
   private static boolean isEmailValid(String email) {
