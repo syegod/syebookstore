@@ -21,7 +21,8 @@ public class IntegrationEnvironment implements AutoCloseable {
                   .port(8080)
                   .dbUrl(postgres.getJdbcUrl())
                   .dbUsername(postgres.getUsername())
-                  .dbPassword(postgres.getPassword()));
+                  .dbPassword(postgres.getPassword())
+                  .jwtSecret("test12345"));
 
       appConfiguration.start();
     } catch (Exception ex) {

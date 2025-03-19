@@ -1,8 +1,8 @@
 package io.syebookstore;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import io.syebookstore.api.account.AccountSdk;
 import io.syebookstore.api.ServiceException;
+import io.syebookstore.api.account.AccountSdk;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -34,7 +34,7 @@ public class ClientSdk implements AutoCloseable {
               .POST(BodyPublishers.ofString(objectMapper.writeValueAsString(data)));
 
       if (jwtToken != null) {
-        requestBuilder.header("Authorization", jwtToken);
+        requestBuilder.header("Authorization", "Bearer " + jwtToken);
       }
       final var request = requestBuilder.build();
 
@@ -42,9 +42,6 @@ public class ClientSdk implements AutoCloseable {
 
       final var statusCode = response.statusCode();
       if (statusCode == 200) {
-        if (responseType.isAssignableFrom(Void.class)) {
-          return null;
-        }
         if (responseType.isAssignableFrom(String.class)) {
           //noinspection unchecked
           return (T) response.body();
@@ -57,11 +54,10 @@ public class ClientSdk implements AutoCloseable {
 
       throw new ServiceException(statusCode, response.body());
     } catch (ServiceException ex) {
-     throw ex;
+      throw ex;
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-
   }
 
   private <T> T api(Class<T> api) {

@@ -8,15 +8,13 @@ import java.util.regex.Pattern;
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1")
 public class AccountController {
-
-  private static final Pattern EMAIL_PATTERN =
-      Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
 
   private final AccountService accountService;
 
@@ -42,7 +40,7 @@ public class AccountController {
       throw new ServiceException(400, "Missing or invalid: email");
     }
 
-    if (!isEmailValid(email)) {
+    if (!AuthUtils.isEmailValid(email)) {
       throw new ServiceException(400, "Missing or invalid: email");
     }
 
@@ -67,7 +65,24 @@ public class AccountController {
     return toAccountInfo(account);
   }
 
-  private static boolean isEmailValid(String email) {
-    return EMAIL_PATTERN.matcher(email).matches();
+  @PostMapping("/login")
+  public String login(@RequestBody LoginRequest request) {
+    final var usernameOrEmail = request.usernameOrEmail();
+    if (usernameOrEmail == null) {
+      throw new ServiceException(400, "Missing or invalid: username or email");
+    }
+    if (usernameOrEmail.length() < 8 || usernameOrEmail.length() > 64) {
+      throw new ServiceException(400, "Missing or invalid: username");
+    }
+
+    final var password = request.password();
+    if (password == null) {
+      throw new ServiceException(400, "Missing or invalid: password");
+    }
+    if (password.length() < 8 || password.length() > 64) {
+      throw new ServiceException(400, "Missing or invalid: password");
+    }
+
+    return accountService.login(request);
   }
 }

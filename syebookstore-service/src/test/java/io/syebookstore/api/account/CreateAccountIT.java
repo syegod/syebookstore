@@ -29,32 +29,37 @@ public class CreateAccountIT {
     existingAccountInfo = createAccount();
   }
 
-  @ParameterizedTest()
+  @ParameterizedTest(name = "{0}")
   @MethodSource("testCreateAccountFailedMethodSource")
   void testCreateAccountFailed(FailedArgs args, ClientSdk clientSdk) {
     try {
       clientSdk.accountSdk().createAccount(args.request);
       fail("Expected exception");
     } catch (Exception ex) {
-      assertError(ex, args.errorCode, args.message);
+      assertError(ex, args.errorCode, args.errorMessage);
     }
   }
 
   private record FailedArgs(
-      String test, CreateAccountRequest request, int errorCode, String message) {
+      String test, CreateAccountRequest request, int errorCode, String errorMessage) {
     @Override
     public String toString() {
       return new StringJoiner(", ", FailedArgs.class.getSimpleName() + "[", "]")
           .add("test='" + test + "'")
           .add("request=" + request)
           .add("errorCode=" + errorCode)
-          .add("message='" + message + "'")
+          .add("errorMessage='" + errorMessage + "'")
           .toString();
     }
   }
 
   static Stream<FailedArgs> testCreateAccountFailedMethodSource() {
     return Stream.of(
+        new FailedArgs(
+            "Null request",
+            null,
+            400,
+            "Missing or invalid: username"),
         new FailedArgs(
             "All parameters are empty strings",
             new CreateAccountRequest().username("").email("").password(""),

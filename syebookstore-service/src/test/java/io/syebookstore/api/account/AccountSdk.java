@@ -10,6 +10,6 @@ public interface AccountSdk {
 
   AccountInfo getAccount(Long accountId);
 
-  Void deleteAccount(String password);
+  Long deleteAccount(String password);
 
 }
