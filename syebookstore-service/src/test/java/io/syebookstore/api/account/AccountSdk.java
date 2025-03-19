@@ -10,6 +10,5 @@ public interface AccountSdk {
 
   AccountInfo updateAccount(UpdateAccountRequest request);
 
-  Long deleteAccount(String password);
-
+  ListReviewResponse listReviews(ListReviewRequest request);
 }

@@ -8,6 +8,8 @@ public class AccountInfo {
   private Long id;
   private String username;
   private String email;
+  private AccountStatus status;
+  private String description;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
@@ -38,6 +40,24 @@ public class AccountInfo {
     return this;
   }
 
+  public AccountStatus status() {
+    return status;
+  }
+
+  public AccountInfo status(AccountStatus status) {
+    this.status = status;
+    return this;
+  }
+
+  public String description() {
+    return description;
+  }
+
+  public AccountInfo description(String description) {
+    this.description = description;
+    return this;
+  }
+
   public LocalDateTime createdAt() {
     return createdAt;
   }
@@ -62,6 +82,8 @@ public class AccountInfo {
         .add("id=" + id)
         .add("username='" + username + "'")
         .add("email='" + email + "'")
+        .add("status=" + status)
+        .add("description='" + description + "'")
         .add("createdAt=" + createdAt)
         .add("updatedAt=" + updatedAt)
         .toString();

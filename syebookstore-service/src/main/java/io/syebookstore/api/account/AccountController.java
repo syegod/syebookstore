@@ -1,6 +1,7 @@
 package io.syebookstore.api.account;
 
 import static io.syebookstore.api.account.AccountMappers.toAccountInfo;
+import static io.syebookstore.api.account.AuthUtils.isEmailValid;
 
 import io.syebookstore.annotations.Protected;
 import io.syebookstore.api.ServiceException;
@@ -40,7 +41,7 @@ public class AccountController {
       throw new ServiceException(400, "Missing or invalid: email");
     }
 
-    if (!AuthUtils.isEmailValid(email)) {
+    if (!isEmailValid(email)) {
       throw new ServiceException(400, "Missing or invalid: email");
     }
 
@@ -89,10 +90,57 @@ public class AccountController {
   @PostMapping("/getAccount")
   @Protected
   public AccountInfo getAccount(
-      @RequestAttribute("userId") Long userId, @RequestBody(required = false) Long id) {
+      @RequestAttribute("accountId") Long accountId, @RequestBody(required = false) Long id) {
     if (id == null) {
-      return toAccountInfo(accountService.getAccount(userId));
+      return toAccountInfo(accountService.getAccount(accountId));
     }
     return toAccountInfo(accountService.getAccount(id));
+  }
+
+  @PostMapping("/updateAccount")
+  @Protected
+  public AccountInfo updateAccount(
+      @RequestAttribute("accountId") Long userId, @RequestBody UpdateAccountRequest request) {
+    final var username = request.username();
+    if (username != null) {
+      if (username.length() < 8 || username.length() > 64) {
+        throw new ServiceException(400, "Invalid: username");
+      }
+    }
+
+    final var email = request.email();
+    if (email != null) {
+      if (email.length() < 8 || email.length() > 64) {
+        throw new ServiceException(400, "Invalid: email");
+      }
+      if (!isEmailValid(email)) {
+        throw new ServiceException(400, "Invalid: email");
+      }
+    }
+
+    final var description = request.description();
+    if (description != null) {
+      if (description.length() < 8 || description.length() > 500) {
+        throw new ServiceException(400, "Invalid: description");
+      }
+    }
+
+    final var password = request.password();
+    if (password != null) {
+      if (password.length() < 8 || password.length() > 64) {
+        throw new ServiceException(400, "Invalid: password");
+      }
+    }
+
+    Account account;
+    try {
+      account = accountService.updateAccount(request, userId);
+    } catch (DataAccessException e) {
+      if (e.getMessage().contains("duplicate key value violates unique constraint")) {
+        throw new ServiceException(400, "Cannot update account: already exists");
+      }
+      throw e;
+    }
+    return toAccountInfo(account);
   }
 }

@@ -11,7 +11,6 @@ import static org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUti
 
 import io.syebookstore.ClientSdk;
 import io.syebookstore.environment.IntegrationEnvironmentExtension;
-import java.util.StringJoiner;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -44,12 +43,7 @@ public class CreateAccountIT {
       String test, CreateAccountRequest request, int errorCode, String errorMessage) {
     @Override
     public String toString() {
-      return new StringJoiner(", ", FailedArgs.class.getSimpleName() + "[", "]")
-          .add("test='" + test + "'")
-          .add("request=" + request)
-          .add("errorCode=" + errorCode)
-          .add("errorMessage='" + errorMessage + "'")
-          .toString();
+      return test;
     }
   }
 

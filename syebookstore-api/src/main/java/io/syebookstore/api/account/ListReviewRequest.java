@@ -2,6 +2,7 @@ package io.syebookstore.api.account;
 
 import io.syebookstore.api.OrderBy;
 import java.time.LocalDateTime;
+import java.util.StringJoiner;
 
 public class ListReviewRequest {
 
@@ -84,5 +85,19 @@ public class ListReviewRequest {
   public ListReviewRequest orderBy(OrderBy orderBy) {
     this.orderBy = orderBy;
     return this;
+  }
+
+  @Override
+  public String toString() {
+    return new StringJoiner(", ", ListReviewRequest.class.getSimpleName() + "[", "]")
+        .add("keyword='" + keyword + "'")
+        .add("fromRating=" + fromRating)
+        .add("toRating=" + toRating)
+        .add("fromDate=" + fromDate)
+        .add("toDate=" + toDate)
+        .add("limit=" + limit)
+        .add("offset=" + offset)
+        .add("orderBy=" + orderBy)
+        .toString();
   }
 }

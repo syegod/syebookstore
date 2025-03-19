@@ -1,11 +1,11 @@
 package io.syebookstore.api.account;
 
+import static io.syebookstore.api.account.AuthUtils.hash;
+
 import io.syebookstore.ServiceConfig;
 import io.syebookstore.api.ServiceException;
-import io.syebookstore.api.account.AuthUtils;
 import io.syebookstore.api.account.repository.Account;
 import io.syebookstore.api.account.repository.AccountRepository;
-import jakarta.annotation.Nullable;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -26,7 +26,7 @@ public class AccountService {
 
   public Account createAccount(CreateAccountRequest request) {
     final var now = LocalDateTime.now(Clock.systemUTC()).truncatedTo(ChronoUnit.MILLIS);
-    final var hashedPassword = AuthUtils.hash(request.password());
+    final var hashedPassword = hash(request.password());
 
     final var account =
         new Account()
@@ -63,5 +63,28 @@ public class AccountService {
       throw new ServiceException(404, "Account not found");
     }
     return account;
+  }
+
+  public Account updateAccount(UpdateAccountRequest request, Long accountId) {
+    var account = accountRepository.findById(accountId).orElse(null);
+    if (account == null) {
+      throw new ServiceException(404, "Account not found");
+    }
+
+    if (request.username() != null) {
+      account.username(request.username());
+    }
+    if (request.email() != null) {
+      account.email(request.email());
+    }
+    if (request.password() != null) {
+      account.passwordHash(hash(request.password()));
+    }
+    if (request.description() != null) {
+      account.description(request.description());
+    }
+
+    account.status(AccountStatus.NON_CONFIRMED);
+    return account.updatedAt(LocalDateTime.now(Clock.systemUTC()).truncatedTo(ChronoUnit.MILLIS));
   }
 }

@@ -31,7 +31,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         token = token.substring(7);
         try {
           final var decodedJWT = verify(serviceConfig.jwtSecret(), token);
-          request.setAttribute("userId", decodedJWT.getClaim("id").asLong());
+          request.setAttribute("accountId", decodedJWT.getClaim("id").asLong());
         } catch (JWTVerificationException ex) {
           throw new ServiceException(403, "Not authenticated");
         }

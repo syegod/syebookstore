@@ -11,8 +11,9 @@ public class AccountMappers {
         .id(account.id())
         .username(account.username())
         .email(account.email())
+        .description(account.description())
+        .status(account.status())
         .createdAt(account.createdAt())
         .updatedAt(account.updatedAt());
   }
-
 }
