@@ -106,4 +106,15 @@ public class LoginIT {
     final var accountInfo = clientSdk.accountSdk().getAccount(null);
     assertAccount(existingAccountInfo, accountInfo);
   }
+
+  @Test
+  void testWrongToken(ClientSdk clientSdk, AccountInfo accountInfo) {
+    try {
+      clientSdk.jwtToken("test");
+      clientSdk.accountSdk().getAccount(null);
+      fail("Expected exception");
+    } catch (Exception ex) {
+      assertError(ex, 403, "Not authenticated");
+    }
+  }
 }
