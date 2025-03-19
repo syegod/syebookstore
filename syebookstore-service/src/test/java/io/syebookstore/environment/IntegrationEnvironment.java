@@ -1,13 +1,13 @@
 package io.syebookstore.environment;
 
-import io.syebookstore.AppConfiguration;
+import io.syebookstore.ServiceBootstrap;
 import io.syebookstore.ServiceConfig;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 public class IntegrationEnvironment implements AutoCloseable {
 
   private PostgreSQLContainer postgres;
-  private AppConfiguration appConfiguration;
+  private ServiceBootstrap serviceBootstrap;
 
   public void start() {
     try {
@@ -15,8 +15,8 @@ public class IntegrationEnvironment implements AutoCloseable {
       postgres.withExposedPorts(5432);
       postgres.start();
 
-      appConfiguration =
-          new AppConfiguration(
+      serviceBootstrap =
+          new ServiceBootstrap(
               new ServiceConfig()
                   .port(8080)
                   .dbUrl(postgres.getJdbcUrl())
@@ -24,7 +24,7 @@ public class IntegrationEnvironment implements AutoCloseable {
                   .dbPassword(postgres.getPassword())
                   .jwtSecret("test12345"));
 
-      appConfiguration.start();
+      serviceBootstrap.start();
     } catch (Exception ex) {
       throw new RuntimeException(ex);
     }
@@ -35,8 +35,8 @@ public class IntegrationEnvironment implements AutoCloseable {
     if (postgres != null) {
       postgres.close();
     }
-    if (appConfiguration != null) {
-      appConfiguration.close();
+    if (serviceBootstrap != null) {
+      serviceBootstrap.close();
     }
   }
 }

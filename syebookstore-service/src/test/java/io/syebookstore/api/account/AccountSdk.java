@@ -6,9 +6,9 @@ public interface AccountSdk {
 
   String login(LoginRequest loginRequest);
 
-  AccountInfo updateAccount(UpdateAccountRequest request);
-
   AccountInfo getAccount(Long accountId);
+
+  AccountInfo updateAccount(UpdateAccountRequest request);
 
   Long deleteAccount(String password);
 

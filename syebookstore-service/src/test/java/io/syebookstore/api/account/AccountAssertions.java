@@ -12,6 +12,14 @@ public class AccountAssertions {
 
   private AccountAssertions() {}
 
+  public static void login(ClientSdk clientSdk, AccountInfo accountInfo) {
+    final var token =
+        clientSdk
+            .accountSdk()
+            .login(new LoginRequest().usernameOrEmail(accountInfo.email()).password("test12345"));
+    clientSdk.jwtToken(token);
+  }
+
   public static AccountInfo createAccount() {
     return createAccount(null);
   }
@@ -23,10 +31,7 @@ public class AccountAssertions {
       final var email =
           randomAlphanumeric(4) + "@" + randomAlphabetic(2, 10) + "." + randomAlphabetic(2, 10);
       final var request =
-          new CreateAccountRequest()
-              .username(username)
-              .email(email)
-              .password("test12345");
+          new CreateAccountRequest().username(username).email(email).password("test12345");
       if (consumer != null) {
         consumer.accept(request);
       }

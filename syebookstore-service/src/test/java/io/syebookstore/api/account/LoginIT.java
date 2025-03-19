@@ -33,7 +33,7 @@ public class LoginIT {
     try {
       clientSdk
           .accountSdk()
-          .login(new LoginRequest().usernameOrEmail(accountInfo.username()).password("test12345"));
+          .login(args.request);
       fail("Expected exception");
     } catch (Exception ex) {
       assertError(ex, args.errorCode, args.errorMessage);

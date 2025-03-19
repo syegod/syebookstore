@@ -2,9 +2,9 @@ package io.syebookstore.api.account;
 
 import static io.syebookstore.api.account.AccountMappers.toAccountInfo;
 
+import io.syebookstore.annotations.Protected;
 import io.syebookstore.api.ServiceException;
 import io.syebookstore.api.account.repository.Account;
-import java.util.regex.Pattern;
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,7 +72,7 @@ public class AccountController {
       throw new ServiceException(400, "Missing or invalid: username or email");
     }
     if (usernameOrEmail.length() < 8 || usernameOrEmail.length() > 64) {
-      throw new ServiceException(400, "Missing or invalid: username");
+      throw new ServiceException(400, "Missing or invalid: username or email");
     }
 
     final var password = request.password();
@@ -84,5 +84,11 @@ public class AccountController {
     }
 
     return accountService.login(request);
+  }
+
+  @PostMapping("/getAccount")
+  @Protected
+  public AccountInfo getAccount(@RequestHeader("Authorization") @RequestBody Long id) {
+    return new AccountInfo();
   }
 }

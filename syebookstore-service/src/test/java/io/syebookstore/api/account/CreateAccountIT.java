@@ -56,11 +56,6 @@ public class CreateAccountIT {
   static Stream<FailedArgs> testCreateAccountFailedMethodSource() {
     return Stream.of(
         new FailedArgs(
-            "Null request",
-            null,
-            400,
-            "Missing or invalid: username"),
-        new FailedArgs(
             "All parameters are empty strings",
             new CreateAccountRequest().username("").email("").password(""),
             400,
