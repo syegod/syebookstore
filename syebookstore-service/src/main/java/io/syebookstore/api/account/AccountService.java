@@ -5,6 +5,7 @@ import io.syebookstore.api.ServiceException;
 import io.syebookstore.api.account.AuthUtils;
 import io.syebookstore.api.account.repository.Account;
 import io.syebookstore.api.account.repository.AccountRepository;
+import jakarta.annotation.Nullable;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -53,5 +54,14 @@ public class AccountService {
     }
 
     return AuthUtils.createToken(serviceConfig.jwtSecret(), account.id());
+  }
+
+  @Transactional(readOnly = true)
+  public Account getAccount(Long id) {
+    final var account = accountRepository.findById(id).orElse(null);
+    if (account == null) {
+      throw new ServiceException(404, "Account not found");
+    }
+    return account;
   }
 }

@@ -1,13 +1,13 @@
 package io.syebookstore.interceptors;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
+import static io.syebookstore.api.account.AuthUtils.verify;
+
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import io.syebookstore.ServiceConfig;
 import io.syebookstore.annotations.Protected;
 import io.syebookstore.api.ServiceException;
-import io.syebookstore.api.account.AuthUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -29,7 +29,10 @@ public class AuthInterceptor implements HandlerInterceptor {
       var token = request.getHeader("Authorization");
       if (token != null && token.startsWith("Bearer ")) {
         token = token.substring(7);
-        if (!isValid(token)) {
+        try {
+          final var decodedJWT = verify(serviceConfig.jwtSecret(), token);
+          request.setAttribute("userId", decodedJWT.getClaim("id").asLong());
+        } catch (JWTVerificationException ex) {
           throw new ServiceException(403, "Not authenticated");
         }
       } else {
@@ -37,9 +40,5 @@ public class AuthInterceptor implements HandlerInterceptor {
       }
     }
     return true;
-  }
-
-  private boolean isValid(String token) {
-    return AuthUtils.verify(serviceConfig.jwtSecret(), token) != null;
   }
 }

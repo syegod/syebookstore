@@ -7,8 +7,8 @@ import io.syebookstore.api.ServiceException;
 import io.syebookstore.api.account.repository.Account;
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -88,7 +88,11 @@ public class AccountController {
 
   @PostMapping("/getAccount")
   @Protected
-  public AccountInfo getAccount(@RequestHeader("Authorization") @RequestBody Long id) {
-    return new AccountInfo();
+  public AccountInfo getAccount(
+      @RequestAttribute("userId") Long userId, @RequestBody(required = false) Long id) {
+    if (id == null) {
+      return toAccountInfo(accountService.getAccount(userId));
+    }
+    return toAccountInfo(accountService.getAccount(id));
   }
 }

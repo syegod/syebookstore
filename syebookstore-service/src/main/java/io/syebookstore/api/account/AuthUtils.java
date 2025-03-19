@@ -3,7 +3,6 @@ package io.syebookstore.api.account;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.syebookstore.api.ServiceException;
 import java.time.Clock;
@@ -37,13 +36,13 @@ public class AuthUtils {
   }
 
   public static DecodedJWT verify(String secret, String token) {
-    try {
-      final var algorithm = Algorithm.HMAC256(secret);
-      final var verifier = JWT.require(algorithm).build();
-      return verifier.verify(token);
-    } catch (JWTVerificationException ex) {
-      throw new ServiceException(500, "Internal service error");
-    }
+    final var algorithm = Algorithm.HMAC256(secret);
+    final var verifier = JWT.require(algorithm).build();
+    return verifier.verify(token);
+  }
+
+  public static Long getIdFromJWT(DecodedJWT jwt) {
+    return jwt.getClaim("id").asLong();
   }
 
   public static String hash(String password) {
