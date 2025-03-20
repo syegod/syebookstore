@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import javax.sql.DataSource;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -39,6 +40,7 @@ public class IntegrationEnvironmentExtension
 
     PARAMETERS_TO_RESOLVE.put(IntegrationEnvironment.class, () -> environment);
     PARAMETERS_TO_RESOLVE.put(ClientSdk.class, () -> newResource(ClientSdk::new));
+    PARAMETERS_TO_RESOLVE.put(DataSource.class, () -> environment.getBean(DataSource.class));
     PARAMETERS_TO_RESOLVE.put(AccountInfo.class, AccountAssertions::createAccount);
   }
 

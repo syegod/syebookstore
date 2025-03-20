@@ -30,6 +30,10 @@ public class IntegrationEnvironment implements AutoCloseable {
     }
   }
 
+  public <T> T getBean(Class<T> clazz) {
+    return serviceBootstrap.applicationContext().getBean(clazz);
+  }
+
   @Override
   public void close() {
     if (postgres != null) {

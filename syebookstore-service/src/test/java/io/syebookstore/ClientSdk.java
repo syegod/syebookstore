@@ -3,6 +3,7 @@ package io.syebookstore;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.syebookstore.api.ServiceException;
 import io.syebookstore.api.account.AccountSdk;
+import io.syebookstore.api.book.BookSdk;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -25,11 +26,11 @@ public class ClientSdk implements AutoCloseable {
     client = HttpClient.newHttpClient();
   }
 
-  private <T> T sendRequest(String name, Object data, Class<T> responseType) {
+  private <T> T sendRequest(String rootUrl, String name, Object data, Class<T> responseType) {
     try {
       final var requestBuilder =
           HttpRequest.newBuilder()
-              .uri(URI.create("http://localhost:8080/v1/" + name))
+              .uri(URI.create("http://localhost:8080/v1" + rootUrl + "/" + name))
               .header("Content-Type", "application/json")
               .POST(BodyPublishers.ofString(objectMapper.writeValueAsString(data)));
 
@@ -60,7 +61,7 @@ public class ClientSdk implements AutoCloseable {
     }
   }
 
-  private <T> T api(Class<T> api) {
+  private <T> T api(Class<T> api, String rootUrl) {
     if (!api.isInterface()) {
       throw new IllegalArgumentException("Must be interface: " + api);
     }
@@ -80,12 +81,16 @@ public class ClientSdk implements AutoCloseable {
               final var returnType = (Class<T>) method.getReturnType();
 
               LOGGER.debug("Send: {}", data);
-              return sendRequest(name, data, returnType);
+              return sendRequest(rootUrl, name, data, returnType);
             });
   }
 
   public AccountSdk accountSdk() {
-    return api(AccountSdk.class);
+    return api(AccountSdk.class, "/account");
+  }
+
+  public BookSdk bookSdk() {
+    return api(BookSdk.class, "/book");
   }
 
   public String jwtToken() {

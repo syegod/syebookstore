@@ -33,7 +33,8 @@ public class AccountService {
             .username(request.username())
             .email(request.email())
             .passwordHash(hashedPassword)
-            .status(AccountStatus.NON_CONFIRMED)
+            // TODO: https://github.com/syegod/syebookstore/issues/4
+            .status(AccountStatus.CONFIRMED)
             .createdAt(now)
             .updatedAt(now);
 
@@ -84,7 +85,8 @@ public class AccountService {
       account.description(request.description());
     }
 
-    account.status(AccountStatus.NON_CONFIRMED);
+    // TODO: https://github.com/syegod/syebookstore/issues/4
+    account.status(AccountStatus.CONFIRMED);
     return account.updatedAt(LocalDateTime.now(Clock.systemUTC()).truncatedTo(ChronoUnit.MILLIS));
   }
 }

@@ -131,7 +131,8 @@ public class UpdateAccountIT {
     assertEquals(username, accountInfo.username());
     assertEquals(email, accountInfo.email());
     assertEquals(existingAccountInfo.description(), accountInfo.description());
-    assertEquals(AccountStatus.NON_CONFIRMED, accountInfo.status());
+    // TODO: https://github.com/syegod/syebookstore/issues/4
+    assertEquals(AccountStatus.CONFIRMED, accountInfo.status());
     assertEquals(existingAccountInfo.createdAt(), accountInfo.createdAt());
     assertNotNull(existingAccountInfo.updatedAt());
   }
