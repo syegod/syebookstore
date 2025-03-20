@@ -10,7 +10,7 @@ public class BookInfo {
   private String title;
   private String description;
   private Integer publicationDate;
-  private Byte[] content;
+  private byte[] content;
   private List<String> authors;
   private List<String> tags;
 
@@ -59,11 +59,11 @@ public class BookInfo {
     return this;
   }
 
-  public Byte[] content() {
+  public byte[] content() {
     return content;
   }
 
-  public BookInfo content(Byte[] content) {
+  public BookInfo content(byte[] content) {
     this.content = content;
     return this;
   }

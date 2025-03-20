@@ -6,22 +6,13 @@ import java.util.StringJoiner;
 
 public class UploadBookRequest {
 
-  private String isbn;
   private String title;
+  private String isbn;
   private String description;
   private Integer publicationDate;
-  private Byte[] content;
+  private byte[] content;
   private List<String> authors;
   private List<String> tags;
-
-  public String isbn() {
-    return isbn;
-  }
-
-  public UploadBookRequest isbn(String isbn) {
-    this.isbn = isbn;
-    return this;
-  }
 
   public String title() {
     return title;
@@ -29,6 +20,15 @@ public class UploadBookRequest {
 
   public UploadBookRequest title(String title) {
     this.title = title;
+    return this;
+  }
+
+  public String isbn() {
+    return isbn;
+  }
+
+  public UploadBookRequest isbn(String isbn) {
+    this.isbn = isbn;
     return this;
   }
 
@@ -50,11 +50,11 @@ public class UploadBookRequest {
     return this;
   }
 
-  public Byte[] content() {
+  public byte[] content() {
     return content;
   }
 
-  public UploadBookRequest content(Byte[] content) {
+  public UploadBookRequest content(byte[] content) {
     this.content = content;
     return this;
   }

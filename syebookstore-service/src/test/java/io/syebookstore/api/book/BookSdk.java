@@ -2,7 +2,7 @@ package io.syebookstore.api.book;
 
 public interface BookSdk {
 
-  Long uploadBook(UploadBookRequest request);
+  BookInfo uploadBook(UploadBookRequest request);
 
   ListBooksResponse listBooks(ListBooksRequest request);
 
