@@ -1,8 +1,12 @@
 package io.syebookstore.api.book;
 
+import static io.syebookstore.api.book.BookMappers.toBookInfo;
+
 import io.syebookstore.annotations.Protected;
 import io.syebookstore.api.ServiceException;
+import io.syebookstore.api.book.repository.Book;
 import java.time.LocalDate;
+import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/v1/book")
 public class BookController {
+
+  private final BookService bookService;
+
+  public BookController(BookService bookService) {
+    this.bookService = bookService;
+  }
 
   @PostMapping("/uploadBook")
   @Protected
@@ -50,6 +60,16 @@ public class BookController {
       throw new ServiceException(400, "Missing or invalid: tags");
     }
 
-    return new BookInfo();
+    Book book;
+    try {
+      book = bookService.uploadBook(request);
+    } catch (DataAccessException e) {
+      if (e.getMessage().contains("duplicate key value violates unique constraint")) {
+        throw new ServiceException(400, "Cannot upload book: already exists");
+      }
+      throw e;
+    }
+
+    return toBookInfo(book);
   }
 }

@@ -2,6 +2,7 @@ package io.syebookstore.api.book;
 
 import static io.syebookstore.AssertionUtils.ra;
 import static io.syebookstore.api.account.AccountAssertions.login;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.syebookstore.ClientSdk;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class BookAssertions {
+
+  private BookAssertions() {}
 
   public static BookInfo createBook(AccountInfo accountInfo, Consumer<UploadBookRequest> consumer) {
     try (final var clientSdk = new ClientSdk()) {
@@ -54,7 +57,7 @@ public class BookAssertions {
     assertEquals(expected.title(), actual.title(), "actual.title");
     assertEquals(expected.description(), actual.description(), "actual.description");
     assertEquals(expected.publicationDate(), actual.publicationDate(), "actual.publicationDate");
-    assertEquals(expected.content(), actual.content(), "actual.content");
+    assertArrayEquals(expected.content(), actual.content(), "actual.content");
     assertEquals(expected.authors(), actual.authors(), "actual.authors");
     assertEquals(expected.tags(), actual.tags(), "actual.tags");
   }

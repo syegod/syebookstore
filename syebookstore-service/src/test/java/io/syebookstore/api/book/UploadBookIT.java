@@ -4,6 +4,7 @@ import static io.syebookstore.AssertionUtils.ra;
 import static io.syebookstore.api.ErrorAssertions.assertError;
 import static io.syebookstore.api.account.AccountAssertions.login;
 import static io.syebookstore.api.book.BookAssertions.assertBookRequest;
+import static io.syebookstore.api.book.BookAssertions.createBook;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import io.syebookstore.ClientSdk;
@@ -145,6 +146,18 @@ public class UploadBookIT {
                         Arrays.stream(new int[10]).mapToObj(e -> ra(10)).toArray(String[]::new))),
             400,
             "Missing or invalid: tags"));
+  }
+
+  @Test
+  void testUploadBookExistingISBN(AccountInfo accountInfo) {
+    final var isbn = ra(13);
+    createBook(accountInfo, request -> request.isbn(isbn));
+    try {
+      createBook(accountInfo, request -> request.isbn(isbn));
+      fail("Expected exception");
+    } catch (Exception ex) {
+      assertError(ex, 400, "Cannot upload book: already exists");
+    }
   }
 
   @Test

@@ -6,6 +6,9 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 
 public class AssertionUtils {
+
+  private AssertionUtils() {}
+
   public static Field[] getFields(Class<?> clazz) {
     return Arrays.stream(clazz.getDeclaredFields()).toArray(Field[]::new);
   }
