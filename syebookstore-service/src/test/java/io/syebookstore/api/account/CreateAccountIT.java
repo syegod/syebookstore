@@ -1,14 +1,18 @@
 package io.syebookstore.api.account;
 
 import static io.syebookstore.api.ErrorAssertions.assertError;
+import static io.syebookstore.api.account.AccountAssertions.createAccount;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
 import io.syebookstore.ClientSdk;
 import io.syebookstore.environment.IntegrationEnvironmentExtension;
-import io.syemessenger.api.account.CreateAccountRequest;
-import java.util.StringJoiner;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,27 +21,29 @@ import org.junit.jupiter.params.provider.MethodSource;
 @ExtendWith(IntegrationEnvironmentExtension.class)
 public class CreateAccountIT {
 
-  @ParameterizedTest()
+  private static AccountInfo existingAccountInfo;
+
+  @BeforeAll
+  static void beforeAll() {
+    existingAccountInfo = createAccount();
+  }
+
+  @ParameterizedTest(name = "{0}")
   @MethodSource("testCreateAccountFailedMethodSource")
   void testCreateAccountFailed(FailedArgs args, ClientSdk clientSdk) {
     try {
       clientSdk.accountSdk().createAccount(args.request);
       fail("Expected exception");
     } catch (Exception ex) {
-      assertError(ex, args.errorCode, args.message);
+      assertError(ex, args.errorCode, args.errorMessage);
     }
   }
 
   private record FailedArgs(
-      String test, CreateAccountRequest request, int errorCode, String message) {
+      String test, CreateAccountRequest request, int errorCode, String errorMessage) {
     @Override
     public String toString() {
-      return new StringJoiner(", ", FailedArgs.class.getSimpleName() + "[", "]")
-          .add("test='" + test + "'")
-          .add("request=" + request)
-          .add("errorCode=" + errorCode)
-          .add("message='" + message + "'")
-          .toString();
+      return test;
     }
   }
 
@@ -129,11 +135,41 @@ public class CreateAccountIT {
                 .email("example@email.com")
                 .password(randomAlphanumeric(80)),
             400,
-            "Missing or invalid: password"));
+            "Missing or invalid: password"),
+        new FailedArgs(
+            "Username already exists",
+            new CreateAccountRequest()
+                .username(existingAccountInfo.username())
+                .email("example@email.com")
+                .password(randomAlphanumeric(8, 65)),
+            400,
+            "Cannot create account: already exists"),
+        new FailedArgs(
+            "Email already exists",
+            new CreateAccountRequest()
+                .username(randomAlphanumeric(8, 65))
+                .email(existingAccountInfo.email())
+                .password(randomAlphanumeric(8, 65)),
+            400,
+            "Cannot create account: already exists"));
   }
 
   @Test
-  void testCreateAccountLoggedIn() {
-    fail("Implement");
+  void testCreateAccount(ClientSdk clientSdk) {
+    final var username = randomAlphanumeric(10);
+    final var email =
+        randomAlphanumeric(4) + "@" + randomAlphabetic(2, 10) + "." + randomAlphabetic(2, 10);
+    final var accountInfo =
+        clientSdk
+            .accountSdk()
+            .createAccount(
+                new CreateAccountRequest()
+                    .username(username)
+                    .email(email)
+                    .password(randomAlphanumeric(10)));
+    assertEquals(username, accountInfo.username(), "username");
+    assertEquals(email, accountInfo.email(), "email");
+    assertNotNull(accountInfo.createdAt(), "createdAt");
+    assertTrue(accountInfo.id() > 0, "accountInfo.id: " + accountInfo.id());
   }
 }

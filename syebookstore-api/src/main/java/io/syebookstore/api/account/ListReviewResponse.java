@@ -1,6 +1,6 @@
-package io.syemessenger.api.account;
+package io.syebookstore.api.account;
 
-import io.syemessenger.api.OrderBy;
+import io.syebookstore.api.OrderBy;
 
 public class ListReviewResponse {
 

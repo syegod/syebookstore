@@ -1,15 +1,14 @@
 package io.syebookstore;
 
 import java.util.StringJoiner;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "syebookstore")
 public class ServiceConfig {
 
   private int port = 8080;
   private String dbUrl;
   private String dbUsername;
   private String dbPassword;
+  private String jwtSecret;
 
   public int port() {
     return port;
@@ -47,6 +46,15 @@ public class ServiceConfig {
     return this;
   }
 
+  public String jwtSecret() {
+    return jwtSecret;
+  }
+
+  public ServiceConfig jwtSecret(String jwtSecret) {
+    this.jwtSecret = jwtSecret;
+    return this;
+  }
+
   @Override
   public String toString() {
     return new StringJoiner(", ", ServiceConfig.class.getSimpleName() + "[", "]")
@@ -54,6 +62,7 @@ public class ServiceConfig {
         .add("dbUrl='" + dbUrl + "'")
         .add("dbUsername='" + dbUsername + "'")
         .add("dbPassword='" + dbPassword + "'")
+        .add("jwtSecret='" + jwtSecret + "'")
         .toString();
   }
 }

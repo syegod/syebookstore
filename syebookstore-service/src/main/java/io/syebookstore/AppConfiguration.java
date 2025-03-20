@@ -1,40 +1,36 @@
 package io.syebookstore;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ConfigurableApplicationContext;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-@EnableConfigurationProperties(ServiceConfig.class)
-public class AppConfiguration implements AutoCloseable {
+@Configuration
+public class AppConfiguration {
 
-  public static final Logger LOGGER = LoggerFactory.getLogger(AppConfiguration.class);
-
-  private ConfigurableApplicationContext context;
-
-  private final ServiceConfig serviceConfig;
-
-  public AppConfiguration(ServiceConfig serviceConfig) {
-    this.serviceConfig = serviceConfig;
+  @Bean
+  public DataSource dataSource(ServiceConfig serviceConfig) {
+    final var hikariConfig = new HikariConfig();
+    hikariConfig.setJdbcUrl(serviceConfig.dbUrl());
+    hikariConfig.setUsername(serviceConfig.dbUsername());
+    hikariConfig.setPassword(serviceConfig.dbPassword());
+    hikariConfig.setConnectionInitSql("CREATE SCHEMA IF NOT EXISTS syebookstore");
+    hikariConfig.setSchema("syebookstore");
+    return new HikariDataSource(hikariConfig);
   }
 
-  public void start() {
-    context =
-        new SpringApplicationBuilder(AppConfiguration.class)
-            .web(WebApplicationType.SERVLET)
-            .properties("server.port=" + serviceConfig.port())
-            .run();
-  }
-
-  public void close() {
-    if (context != null) {
-      context.close();
-      LOGGER.info("Jetty server stopped");
-    }
+  @Bean
+  public ObjectMapper objectMapper() {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.ANY);
+    objectMapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.ANY);
+    objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+    objectMapper.registerModule(new JavaTimeModule());
+    return objectMapper;
   }
 }

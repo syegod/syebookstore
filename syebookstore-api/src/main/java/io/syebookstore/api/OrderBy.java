@@ -1,4 +1,4 @@
-package io.syemessenger.api;
+package io.syebookstore.api;
 
 public class OrderBy {
 
