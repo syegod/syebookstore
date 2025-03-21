@@ -8,5 +8,5 @@ public interface BookSdk {
 
   BookInfo getBook(Long id);
 
-  int[] downloadBook(Long id);
+  byte[] downloadBook(Long id);
 }
