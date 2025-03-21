@@ -1,8 +1,11 @@
 package io.syebookstore.api.book;
 
+import static io.syebookstore.api.Pageables.toPageable;
+
 import io.syebookstore.api.book.repository.Book;
 import io.syebookstore.api.book.repository.BookRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,5 +28,12 @@ public class BookService {
             .content(request.content())
             .authors(request.authors().toArray(String[]::new))
             .tags(request.tags().toArray(String[]::new)));
+  }
+
+  public Page<Book> listBooks(ListBooksRequest request) {
+    final var pageable = toPageable(request.offset(), request.limit(), request.orderBy());
+
+    final var k = request.keyword() != null ? request.keyword() : "";
+    return bookRepository.findBooks(k, request.tags(), pageable);
   }
 }

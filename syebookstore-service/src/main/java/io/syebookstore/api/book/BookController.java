@@ -72,4 +72,37 @@ public class BookController {
 
     return toBookInfo(book);
   }
+
+  @PostMapping("/listBooks")
+  public ListBooksResponse listBooks(@RequestBody ListBooksRequest request) {
+    final var keyword = request.keyword();
+    if (keyword != null && (keyword.length() < 4 || keyword.length() > 64)) {
+      throw new ServiceException(400, "Missing or invalid: keyword");
+    }
+
+    final var tags = request.tags();
+    if ((tags != null && !tags.isEmpty()) && tags.size() > 10) {
+      throw new ServiceException(400, "Missing or invalid: tags");
+    }
+
+    final var offset = request.offset();
+    if (offset != null && offset < 0) {
+      throw new ServiceException(400, "Missing or invalid: offset");
+    }
+
+    final var limit = request.limit();
+    if (limit != null && (limit < 0 || limit > 50)) {
+      throw new ServiceException(400, "Missing or invalid: limit");
+    }
+
+    final var bookPage = bookService.listBooks(request);
+
+    final var bookInfos = bookPage.get().map(BookMappers::toBookInfo).toList();
+
+    return new ListBooksResponse()
+        .bookInfos(bookInfos)
+        .limit(limit)
+        .offset(offset)
+        .totalCount(bookPage.getTotalElements());
+  }
 }

@@ -29,20 +29,20 @@ public class ListBooksRequest {
     return this;
   }
 
-  public int limit() {
+  public Integer limit() {
     return limit;
   }
 
-  public ListBooksRequest limit(int limit) {
+  public ListBooksRequest limit(Integer limit) {
     this.limit = limit;
     return this;
   }
 
-  public int offset() {
+  public Integer offset() {
     return offset;
   }
 
-  public ListBooksRequest offset(int offset) {
+  public ListBooksRequest offset(Integer offset) {
     this.offset = offset;
     return this;
   }

@@ -8,6 +8,7 @@ public class ListBooksResponse {
   private Integer limit;
   private Integer offset;
   private OrderBy orderBy;
+  private Long totalCount;
   private List<BookInfo> bookInfos;
 
   public Integer limit() {
@@ -37,6 +38,15 @@ public class ListBooksResponse {
     return this;
   }
 
+  public Long totalCount() {
+    return totalCount;
+  }
+
+  public ListBooksResponse totalCount(Long totalCount) {
+    this.totalCount = totalCount;
+    return this;
+  }
+
   public List<BookInfo> bookInfos() {
     return bookInfos;
   }
@@ -52,6 +62,7 @@ public class ListBooksResponse {
         .add("limit=" + limit)
         .add("offset=" + offset)
         .add("orderBy=" + orderBy)
+        .add("totalCount=" + totalCount)
         .add("bookInfos=" + bookInfos)
         .toString();
   }

@@ -47,7 +47,7 @@ public class BookAssertions {
     assertEquals(expected.title(), actual.title(), "actual.title");
     assertEquals(expected.description(), actual.description(), "actual.description");
     assertEquals(expected.publicationDate(), actual.publicationDate(), "actual.publicationDate");
-    assertEquals(expected.content(), actual.content(), "actual.content");
+    assertArrayEquals(expected.content(), actual.content(), "actual.content");
     assertEquals(expected.authors(), actual.authors(), "actual.authors");
     assertEquals(expected.tags(), actual.tags(), "actual.tags");
   }
