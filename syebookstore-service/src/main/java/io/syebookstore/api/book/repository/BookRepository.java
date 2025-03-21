@@ -18,4 +18,7 @@ public interface BookRepository extends CrudRepository<Book, Long> {
           + "OR description LIKE CONCAT('%', :keyword, '%'))")
   Page<Book> findBooks(
       @Param("keyword") String keyword, @Param("tags") List<String> tags, Pageable pageable);
+
+  @NativeQuery("SELECT content FROM books WHERE id = :id")
+  byte[] findBookContentById(@Param("id") Long id);
 }

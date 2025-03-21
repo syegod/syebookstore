@@ -7,6 +7,10 @@ import io.syebookstore.api.ServiceException;
 import io.syebookstore.api.book.repository.Book;
 import java.time.LocalDate;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -109,5 +113,17 @@ public class BookController {
   @PostMapping("/getBook")
   public BookInfo getBook(@RequestBody Long id) {
     return toBookInfo(bookService.getBook(id));
+  }
+
+  @PostMapping("/downloadBook")
+  @Protected
+  public ResponseEntity<byte[]> downloadBook(@RequestBody Long id) {
+    byte[] bookContent = bookService.downloadBook(id);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+    headers.setContentDispositionFormData("attachment", "book.pdf");
+
+    return new ResponseEntity<>(bookContent, headers, HttpStatus.OK);
   }
 }
