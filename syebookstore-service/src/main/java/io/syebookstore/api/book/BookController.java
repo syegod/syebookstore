@@ -105,4 +105,9 @@ public class BookController {
         .offset(offset)
         .totalCount(bookPage.getTotalElements());
   }
+
+  @PostMapping("/getBook")
+  public BookInfo getBook(@RequestBody Long id) {
+    return toBookInfo(bookService.getBook(id));
+  }
 }

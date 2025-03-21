@@ -2,9 +2,11 @@ package io.syebookstore.api.book;
 
 import static io.syebookstore.api.Pageables.toPageable;
 
+import io.syebookstore.api.ServiceException;
 import io.syebookstore.api.book.repository.Book;
 import io.syebookstore.api.book.repository.BookRepository;
 import jakarta.transaction.Transactional;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -35,5 +37,14 @@ public class BookService {
 
     final var k = request.keyword() != null ? request.keyword() : "";
     return bookRepository.findBooks(k, request.tags(), pageable);
+  }
+
+  public Book getBook(Long id) {
+    final var book = bookRepository.findById(id).orElse(null);
+    if (book == null) {
+      throw new ServiceException(404, "Book not found");
+    }
+
+    return book;
   }
 }
