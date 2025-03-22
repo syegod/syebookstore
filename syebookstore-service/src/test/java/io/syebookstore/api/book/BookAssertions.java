@@ -1,6 +1,7 @@
 package io.syebookstore.api.book;
 
 import static io.syebookstore.AssertionUtils.ra;
+import static io.syebookstore.api.account.AccountAssertions.createAccount;
 import static io.syebookstore.api.account.AccountAssertions.login;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +40,10 @@ public class BookAssertions {
 
   public static BookInfo createBook(AccountInfo accountInfo) {
     return createBook(accountInfo, null);
+  }
+
+  public static BookInfo createBook() {
+    return createBook(createAccount());
   }
 
   public static void assertBook(BookInfo expected, BookInfo actual) {
