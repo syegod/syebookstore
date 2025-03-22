@@ -1,5 +1,7 @@
 package io.syebookstore.api.review;
 
+import static io.syebookstore.api.Pageables.toPageable;
+
 import io.syebookstore.api.ServiceException;
 import io.syebookstore.api.book.repository.BookRepository;
 import io.syebookstore.api.review.repository.Review;
@@ -7,6 +9,7 @@ import io.syebookstore.api.review.repository.ReviewRepository;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,5 +57,12 @@ public class ReviewService {
 
     return reviewRepository.save(
         review.rating(request.rating()).message(request.message()).updatedAt(now));
+  }
+
+  public Page<Review> listReviews(ListReviewsRequest request) {
+    final var pageable = toPageable(request.offset(), request.limit(), request.orderBy());
+
+    return reviewRepository.findByBookIdAndMessageContaining(
+        request.bookId(), request.keyword(), pageable);
   }
 }

@@ -75,4 +75,30 @@ public class ReviewController {
       throw new ServiceException(500, "Review updating failed");
     }
   }
+
+  @PostMapping("/listReviews")
+  public ListReviewsResponse listReviews(@RequestBody ListReviewsRequest request) {
+    final var keyword = request.keyword();
+    if (keyword != null && (keyword.length() < 4 || keyword.length() > 64)) {
+      throw new ServiceException(400, "Missing or invalid: keyword");
+    }
+
+    final var offset = request.offset();
+    if (offset != null && offset < 0) {
+      throw new ServiceException(400, "Missing or invalid: offset");
+    }
+
+    final var limit = request.limit();
+    if (limit != null && (limit < 0 || limit > 50)) {
+      throw new ServiceException(400, "Missing or invalid: limit");
+    }
+
+    final var reviewPage = reviewService.listReviews(request);
+
+    return new ListReviewsResponse()
+        .reviewInfos(reviewPage.getContent().stream().map(ReviewMappers::toReviewInfo).toList())
+        .limit(request.limit())
+        .offset(offset)
+        .totalCount(reviewPage.getTotalElements());
+  }
 }

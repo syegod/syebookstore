@@ -6,5 +6,5 @@ public interface ReviewSdk {
 
   ReviewInfo updateReview(UpdateReviewRequest request);
 
-  ListReviewsResponse listReview(ListReviewsRequest request);
+  ListReviewsResponse listReviews(ListReviewsRequest request);
 }

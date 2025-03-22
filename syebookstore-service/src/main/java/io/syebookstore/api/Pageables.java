@@ -26,6 +26,10 @@ public class Pageables {
           orderBy.field("updated_at");
         } else if (orderBy.field().equals("publicationDate")) {
           orderBy.field("publication_date");
+        } else if (orderBy.field().equals("bookId")) {
+          orderBy.field("book_id");
+        } else if (orderBy.field().equals("accountId")) {
+          orderBy.field("account_id");
         }
       }
       if (orderBy.direction() == null) {
