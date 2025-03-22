@@ -1,5 +1,7 @@
 package io.syebookstore.api.review;
 
+import static io.syebookstore.api.review.ReviewMappers.toReviewInfo;
+
 import io.syebookstore.annotations.Protected;
 import io.syebookstore.api.ServiceException;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/v1/review")
 public class ReviewController {
+
+  private final ReviewService reviewService;
+
+  public ReviewController(ReviewService reviewService) {
+    this.reviewService = reviewService;
+  }
 
   @PostMapping("/createReview")
   @Protected
@@ -30,5 +38,7 @@ public class ReviewController {
     if (message == null || message.length() < 8 || message.length() > 200) {
       throw new ServiceException(400, "Missing or invalid: message");
     }
+
+    return toReviewInfo(reviewService.createReview(request, accountId));
   }
 }

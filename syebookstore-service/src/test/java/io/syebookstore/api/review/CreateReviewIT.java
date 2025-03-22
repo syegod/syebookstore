@@ -61,7 +61,7 @@ public class CreateReviewIT {
 
   static Stream<FailedArgs> testCreateReviewFailedMethodSource() {
     return Stream.of(
-        new FailedArgs("No book id", new CreateReviewRequest(), 400, "Missing or invalid: book id"),
+        new FailedArgs("No book id", new CreateReviewRequest(), 400, "Missing or invalid: bookId"),
         new FailedArgs(
             "No rating",
             new CreateReviewRequest().bookId(existingBookInfo.id()),
