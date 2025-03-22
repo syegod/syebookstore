@@ -65,6 +65,11 @@ public class UpdateReviewIT {
     return Stream.of(
         new FailedArgs("No review id", new UpdateReviewRequest(), 400, "Missing or invalid: id"),
         new FailedArgs(
+            "No rating",
+            new UpdateReviewRequest().id(existingReviewInfo.id()),
+            400,
+            "Missing or invalid: rating"),
+        new FailedArgs(
             "Rating less than min",
             new UpdateReviewRequest().id(existingReviewInfo.id()).rating(0),
             400,
@@ -74,6 +79,11 @@ public class UpdateReviewIT {
             new UpdateReviewRequest().id(existingReviewInfo.id()).rating(11),
             400,
             "Missing or invalid: rating"),
+        new FailedArgs(
+            "No message",
+            new UpdateReviewRequest().id(existingReviewInfo.id()).rating(5),
+            400,
+            "Missing or invalid: message"),
         new FailedArgs(
             "Message too short",
             new UpdateReviewRequest()
