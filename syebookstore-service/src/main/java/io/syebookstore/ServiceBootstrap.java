@@ -7,6 +7,7 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
@@ -37,6 +38,10 @@ public class ServiceBootstrap implements AutoCloseable {
             .bannerMode(Mode.OFF)
             .properties("server.port=" + serviceConfig.port())
             .run();
+  }
+
+  public ApplicationContext applicationContext() {
+    return context;
   }
 
   public void close() {

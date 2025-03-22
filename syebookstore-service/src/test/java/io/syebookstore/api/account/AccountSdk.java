@@ -10,5 +10,6 @@ public interface AccountSdk {
 
   AccountInfo updateAccount(UpdateAccountRequest request);
 
+  // TODO: https://github.com/syegod/syebookstore/issues/2
   ListReviewResponse listReviews(ListReviewRequest request);
 }
