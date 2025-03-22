@@ -5,9 +5,9 @@ import static io.syebookstore.api.Pageables.toPageable;
 import io.syebookstore.api.ServiceException;
 import io.syebookstore.api.book.repository.Book;
 import io.syebookstore.api.book.repository.BookRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -31,6 +31,7 @@ public class BookService {
             .tags(request.tags().toArray(String[]::new)));
   }
 
+  @Transactional(readOnly = true)
   public Page<Book> listBooks(ListBooksRequest request) {
     final var pageable = toPageable(request.offset(), request.limit(), request.orderBy());
 
@@ -38,6 +39,7 @@ public class BookService {
     return bookRepository.findBooks(k, request.tags(), pageable);
   }
 
+  @Transactional(readOnly = true)
   public Book getBook(Long id) {
     final var book = bookRepository.findById(id).orElse(null);
     if (book == null) {
@@ -47,6 +49,7 @@ public class BookService {
     return book;
   }
 
+  @Transactional(readOnly = true)
   public byte[] downloadBook(Long id) {
     final var book = bookRepository.findBookContentById(id);
     if (book == null) {

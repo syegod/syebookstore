@@ -1,14 +1,12 @@
 package io.syebookstore.api.review;
 
 import io.syebookstore.api.ServiceException;
-import io.syebookstore.api.book.repository.Book;
 import io.syebookstore.api.book.repository.BookRepository;
 import io.syebookstore.api.review.repository.Review;
 import io.syebookstore.api.review.repository.ReviewRepository;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,5 +38,21 @@ public class ReviewService {
             .message(request.message())
             .createdAt(now)
             .updatedAt(now));
+  }
+
+  public Review updateReview(UpdateReviewRequest request, Long accountId) {
+    final var now = LocalDateTime.now(Clock.systemUTC()).truncatedTo(ChronoUnit.MILLIS);
+
+    final var review = reviewRepository.findById(request.id()).orElse(null);
+    if (review == null) {
+      throw new ServiceException(404, "Review not found");
+    }
+
+    if (!review.accountId().equals(accountId)) {
+      throw new ServiceException(403, "Not a review author");
+    }
+
+    return reviewRepository.save(
+        review.rating(request.rating()).message(request.message()).updatedAt(now));
   }
 }

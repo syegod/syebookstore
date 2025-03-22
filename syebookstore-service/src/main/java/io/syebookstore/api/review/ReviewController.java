@@ -39,6 +39,40 @@ public class ReviewController {
       throw new ServiceException(400, "Missing or invalid: message");
     }
 
-    return toReviewInfo(reviewService.createReview(request, accountId));
+    try {
+      return toReviewInfo(reviewService.createReview(request, accountId));
+    } catch (ServiceException ex) {
+      throw ex;
+    } catch (Exception ex) {
+      throw new ServiceException(500, "Review creation failed");
+    }
+  }
+
+  @PostMapping("/updateReview")
+  @Protected
+  public ReviewInfo updateReview(
+      @RequestAttribute("accountId") Long accountId, @RequestBody UpdateReviewRequest request) {
+    final var id = request.id();
+    if (id == null) {
+      throw new ServiceException(400, "Missing or invalid: id");
+    }
+
+    final var rating = request.rating();
+    if (rating == null || rating < 1 || rating > 10) {
+      throw new ServiceException(400, "Missing or invalid: rating");
+    }
+
+    final var message = request.message();
+    if (message == null || message.length() < 8 || message.length() > 200) {
+      throw new ServiceException(400, "Missing or invalid: message");
+    }
+
+    try {
+      return toReviewInfo(reviewService.updateReview(request, accountId));
+    } catch (ServiceException ex) {
+      throw ex;
+    } catch (Exception ex) {
+      throw new ServiceException(500, "Review updating failed");
+    }
   }
 }

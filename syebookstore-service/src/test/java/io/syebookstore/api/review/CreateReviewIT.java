@@ -73,7 +73,7 @@ public class CreateReviewIT {
             400,
             "Missing or invalid: rating"),
         new FailedArgs(
-            "Rating more than max",
+            "Rating over than max",
             new CreateReviewRequest().bookId(existingBookInfo.id()).rating(11),
             400,
             "Missing or invalid: rating"),
@@ -83,7 +83,7 @@ public class CreateReviewIT {
             400,
             "Missing or invalid: message"),
         new FailedArgs(
-            "Message less than min",
+            "Message too short",
             new CreateReviewRequest()
                 .bookId(existingBookInfo.id())
                 .rating(5)
@@ -91,7 +91,7 @@ public class CreateReviewIT {
             400,
             "Missing or invalid: message"),
         new FailedArgs(
-            "Message less than min",
+            "Message too long",
             new CreateReviewRequest()
                 .bookId(existingBookInfo.id())
                 .rating(5)
