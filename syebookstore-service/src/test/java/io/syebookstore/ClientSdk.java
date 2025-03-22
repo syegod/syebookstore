@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.syebookstore.api.ServiceException;
 import io.syebookstore.api.account.AccountSdk;
 import io.syebookstore.api.book.BookSdk;
+import io.syebookstore.api.review.ReviewSdk;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -69,7 +70,6 @@ public class ClientSdk implements AutoCloseable {
     }
   }
 
-
   private <T> T api(Class<T> api, String rootUrl) {
     if (!api.isInterface()) {
       throw new IllegalArgumentException("Must be interface: " + api);
@@ -100,6 +100,10 @@ public class ClientSdk implements AutoCloseable {
 
   public BookSdk bookSdk() {
     return api(BookSdk.class, "/book");
+  }
+
+  public ReviewSdk reviewSdk() {
+    return api(ReviewSdk.class, "/review");
   }
 
   public String jwtToken() {
