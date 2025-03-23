@@ -4,11 +4,26 @@ import java.util.StringJoiner;
 
 public class ServiceConfig {
 
-  private int port = 8080;
+  private int port;
   private String dbUrl;
   private String dbUsername;
   private String dbPassword;
   private String jwtSecret;
+
+  public static ServiceConfig fromSystemProperties() {
+    final var port = getProperty("port");
+    final var dbUrl = getProperty("dbUrl");
+    final var dbUsername = getProperty("dbUsername");
+    final var dbPassword = getProperty("dbPassword");
+    final var jwtSecret = getProperty("jwtSecret");
+
+    return new ServiceConfig()
+        .port(Integer.parseInt(port))
+        .dbUrl(dbUrl)
+        .dbUsername(dbUsername)
+        .dbPassword(dbPassword)
+        .jwtSecret(jwtSecret);
+  }
 
   public int port() {
     return port;
@@ -53,6 +68,18 @@ public class ServiceConfig {
   public ServiceConfig jwtSecret(String jwtSecret) {
     this.jwtSecret = jwtSecret;
     return this;
+  }
+
+  private static String getProperty(String property) {
+    return getProperty(property, false);
+  }
+
+  private static String getProperty(String property, boolean isOptional) {
+    final var value = System.getProperty("syebookstore." + property);
+    if (!isOptional && value == null) {
+      throw new RuntimeException("Wrong config: missing " + property);
+    }
+    return value;
   }
 
   @Override

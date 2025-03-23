@@ -201,4 +201,21 @@ public class UploadBookIT {
     final var bookInfo = clientSdk.bookSdk().uploadBook(request);
     assertBookRequest(request, bookInfo);
   }
+
+  @Test
+  void testUploadLargeBook(ClientSdk clientSdk, AccountInfo accountInfo) {
+    login(clientSdk, accountInfo);
+    final var request =
+        new UploadBookRequest()
+            .title(title())
+            .isbn(isbn())
+            .description(description())
+            .content(new byte[20000000])
+            .publicationDate(publicationDate())
+            .authors(authors())
+            .tags(tags());
+
+    final var bookInfo = clientSdk.bookSdk().uploadBook(request);
+    assertBookRequest(request, bookInfo);
+  }
 }
