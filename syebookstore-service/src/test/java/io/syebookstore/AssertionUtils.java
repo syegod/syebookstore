@@ -3,7 +3,6 @@ package io.syebookstore;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
 import io.syebookstore.api.Direction;
 import io.syebookstore.api.OrderBy;
@@ -57,13 +56,5 @@ public class AssertionUtils {
     } catch (Exception ex) {
       throw new RuntimeException(ex);
     }
-  }
-
-  public static String ra(int charCount) {
-    return randomAlphanumeric(charCount);
-  }
-
-  public static String ra(int charFrom, int charToExc) {
-    return randomAlphanumeric(charFrom, charToExc);
   }
 }

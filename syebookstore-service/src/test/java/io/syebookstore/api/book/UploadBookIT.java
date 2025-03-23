@@ -1,11 +1,18 @@
 package io.syebookstore.api.book;
 
-import static io.syebookstore.AssertionUtils.ra;
 import static io.syebookstore.api.ErrorAssertions.assertError;
 import static io.syebookstore.api.account.AccountAssertions.login;
 import static io.syebookstore.api.book.BookAssertions.assertBookRequest;
 import static io.syebookstore.api.book.BookAssertions.createBook;
+import static io.syebookstore.api.book.BookVocabulary.authors;
+import static io.syebookstore.api.book.BookVocabulary.content;
+import static io.syebookstore.api.book.BookVocabulary.description;
+import static io.syebookstore.api.book.BookVocabulary.isbn;
+import static io.syebookstore.api.book.BookVocabulary.publicationDate;
+import static io.syebookstore.api.book.BookVocabulary.tags;
+import static io.syebookstore.api.book.BookVocabulary.title;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
 import io.syebookstore.ClientSdk;
 import io.syebookstore.api.account.AccountInfo;
@@ -32,8 +39,8 @@ public class UploadBookIT {
   }
 
   @ParameterizedTest(name = "{0}")
-  @MethodSource("testUploadAccountFailedMethodSource")
-  void testUploadAccountFailed(FailedArgs args, ClientSdk clientSdk, AccountInfo accountInfo) {
+  @MethodSource("testUploadBookFailedMethodSource")
+  void testUploadBookFailed(FailedArgs args, ClientSdk clientSdk, AccountInfo accountInfo) {
     login(clientSdk, accountInfo);
     try {
       clientSdk.bookSdk().uploadBook(args.request);
@@ -51,106 +58,124 @@ public class UploadBookIT {
     }
   }
 
-  static Stream<FailedArgs> testUploadAccountFailedMethodSource() {
+  static Stream<FailedArgs> testUploadBookFailedMethodSource() {
     return Stream.of(
         new FailedArgs("Empty request", new UploadBookRequest(), 400, "Missing or invalid: title"),
         new FailedArgs(
             "Title too short",
-            new UploadBookRequest().title(ra(7)),
+            new UploadBookRequest().title(randomAlphanumeric(7)),
             400,
             "Missing or invalid: title"),
         new FailedArgs(
             "Title too long",
-            new UploadBookRequest().title(ra(65)),
+            new UploadBookRequest().title(randomAlphanumeric(65)),
             400,
             "Missing or invalid: title"),
         new FailedArgs(
-            "No isbn", new UploadBookRequest().title(ra(10)), 400, "Missing or invalid: isbn"),
+            "No isbn", new UploadBookRequest().title(title()), 400, "Missing or invalid: isbn"),
         new FailedArgs(
             "Isbn is not 13 char length",
-            new UploadBookRequest().title(ra(10)).isbn(ra(10)),
+            new UploadBookRequest().title(title()).isbn(randomAlphanumeric(10)),
             400,
             "Missing or invalid: isbn"),
         new FailedArgs(
             "No description",
-            new UploadBookRequest().title(ra(10)).isbn(ra(13)),
+            new UploadBookRequest().title(title()).isbn(isbn()),
             400,
             "Missing or invalid: description"),
         new FailedArgs(
             "Description too short",
-            new UploadBookRequest().title(ra(10)).isbn(ra(13)).description(ra(7)),
+            new UploadBookRequest().title(title()).isbn(isbn()).description(randomAlphanumeric(7)),
             400,
             "Missing or invalid: description"),
         new FailedArgs(
             "Description too long",
-            new UploadBookRequest().title(ra(10)).isbn(ra(13)).description(ra(501)),
+            new UploadBookRequest()
+                .title(title())
+                .isbn(isbn())
+                .description(randomAlphanumeric(501)),
             400,
             "Missing or invalid: description"),
         new FailedArgs(
             "No publication date",
-            new UploadBookRequest().title(ra(10)).isbn(ra(13)).description(ra(8)),
+            new UploadBookRequest().title(title()).isbn(isbn()).description(description()),
             400,
             "Missing or invalid: publication date"),
         new FailedArgs(
             "Publication date is in future",
             new UploadBookRequest()
-                .title(ra(10))
-                .isbn(ra(13))
-                .description(ra(8))
+                .title(title())
+                .isbn(isbn())
+                .description(description())
                 .publicationDate(2030),
             400,
             "Missing or invalid: publication date"),
         new FailedArgs(
             "No content",
             new UploadBookRequest()
-                .title(ra(10))
-                .isbn(ra(13))
-                .description(ra(8))
-                .publicationDate(2020),
+                .title(title())
+                .isbn(isbn())
+                .description(description())
+                .publicationDate(publicationDate()),
             400,
             "Missing or invalid: content"),
         new FailedArgs(
             "No authors",
             new UploadBookRequest()
-                .title(ra(10))
-                .isbn(ra(13))
-                .content(new byte[100])
-                .publicationDate(2020)
-                .description(ra(8)),
+                .title(title())
+                .isbn(isbn())
+                .description(description())
+                .publicationDate(publicationDate())
+                .content(content()),
             400,
             "Missing or invalid: authors"),
         new FailedArgs(
             "Too many authors",
             new UploadBookRequest()
-                .title(ra(10))
-                .isbn(ra(13))
-                .description(ra(8))
-                .publicationDate(2020)
-                .content(new byte[100])
+                .title(title())
+                .isbn(isbn())
+                .description(description())
+                .publicationDate(publicationDate())
+                .content(content())
                 .authors(
                     List.of(
-                        Arrays.stream(new int[10]).mapToObj(e -> ra(10)).toArray(String[]::new))),
+                        Arrays.stream(new int[10])
+                            .mapToObj(e -> randomAlphanumeric(10))
+                            .toArray(String[]::new))),
             400,
             "Missing or invalid: authors"),
         new FailedArgs(
+            "No tags",
+            new UploadBookRequest()
+                .title(title())
+                .isbn(isbn())
+                .description(description())
+                .publicationDate(publicationDate())
+                .content(content())
+                .authors(authors()),
+            400,
+            "Missing or invalid: tags"),
+        new FailedArgs(
             "Too many tags",
             new UploadBookRequest()
-                .title(ra(10))
-                .isbn(ra(13))
-                .description(ra(8))
-                .content(new byte[100])
-                .publicationDate(2020)
-                .authors(List.of(ra(15)))
+                .title(title())
+                .isbn(isbn())
+                .description(description())
+                .content(content())
+                .publicationDate(publicationDate())
+                .authors(authors())
                 .tags(
                     List.of(
-                        Arrays.stream(new int[10]).mapToObj(e -> ra(10)).toArray(String[]::new))),
+                        Arrays.stream(new int[10])
+                            .mapToObj(e -> randomAlphanumeric(10))
+                            .toArray(String[]::new))),
             400,
             "Missing or invalid: tags"));
   }
 
   @Test
   void testUploadBookExistingISBN(AccountInfo accountInfo) {
-    final var isbn = ra(13);
+    final var isbn = isbn();
     createBook(accountInfo, request -> request.isbn(isbn));
     try {
       createBook(accountInfo, request -> request.isbn(isbn));
@@ -165,13 +190,13 @@ public class UploadBookIT {
     login(clientSdk, accountInfo);
     final var request =
         new UploadBookRequest()
-            .title(ra(10))
-            .isbn(ra(13))
-            .description(ra(8))
-            .content(new byte[1000])
-            .publicationDate(2020)
-            .authors(List.of(ra(15)))
-            .tags(List.of(Arrays.stream(new int[5]).mapToObj(e -> ra(6)).toArray(String[]::new)));
+            .title(title())
+            .isbn(isbn())
+            .description(description())
+            .content(content())
+            .publicationDate(publicationDate())
+            .authors(authors())
+            .tags(tags());
 
     final var bookInfo = clientSdk.bookSdk().uploadBook(request);
     assertBookRequest(request, bookInfo);

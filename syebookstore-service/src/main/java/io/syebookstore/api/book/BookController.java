@@ -45,7 +45,7 @@ public class BookController {
     }
 
     final var publicationDate = request.publicationDate();
-    if (publicationDate == null || (publicationDate > LocalDate.now().getYear() + 2)) {
+    if (publicationDate == null || (publicationDate > LocalDate.now().getYear())) {
       throw new ServiceException(400, "Missing or invalid: publication date");
     }
 

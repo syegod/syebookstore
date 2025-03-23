@@ -1,15 +1,19 @@
 package io.syebookstore.api.book;
 
-import static io.syebookstore.AssertionUtils.ra;
 import static io.syebookstore.api.account.AccountAssertions.createAccount;
 import static io.syebookstore.api.account.AccountAssertions.login;
+import static io.syebookstore.api.book.BookVocabulary.authors;
+import static io.syebookstore.api.book.BookVocabulary.content;
+import static io.syebookstore.api.book.BookVocabulary.description;
+import static io.syebookstore.api.book.BookVocabulary.isbn;
+import static io.syebookstore.api.book.BookVocabulary.publicationDate;
+import static io.syebookstore.api.book.BookVocabulary.tags;
+import static io.syebookstore.api.book.BookVocabulary.title;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.syebookstore.ClientSdk;
 import io.syebookstore.api.account.AccountInfo;
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class BookAssertions {
@@ -22,13 +26,13 @@ public class BookAssertions {
 
       final var request =
           new UploadBookRequest()
-              .title(ra(10))
-              .isbn(ra(13))
-              .description(ra(8))
-              .content(new byte[1000])
-              .publicationDate(2020)
-              .authors(List.of(ra(15)))
-              .tags(List.of(Arrays.stream(new int[5]).mapToObj(e -> ra(6)).toArray(String[]::new)));
+              .title(title())
+              .isbn(isbn())
+              .description(description())
+              .content(content())
+              .publicationDate(publicationDate())
+              .authors(authors())
+              .tags(tags());
 
       if (consumer != null) {
         consumer.accept(request);
