@@ -50,8 +50,8 @@ public class BookService {
   }
 
   @Transactional(readOnly = true)
-  public byte[] downloadBook(Long id) {
-    final var book = bookRepository.findBookContentById(id);
+  public Book downloadBook(Long id) {
+    final var book = bookRepository.findById(id).orElse(null);
     if (book == null) {
       throw new ServiceException(404, "Book not found");
     }

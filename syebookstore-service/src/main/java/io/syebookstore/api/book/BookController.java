@@ -118,12 +118,12 @@ public class BookController {
   @PostMapping("/downloadBook")
   @Protected
   public ResponseEntity<byte[]> downloadBook(@RequestBody Long id) {
-    byte[] bookContent = bookService.downloadBook(id);
+    final var book = bookService.downloadBook(id);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-    headers.setContentDispositionFormData("attachment", "book.pdf");
+    headers.setContentDispositionFormData("attachment", book.title() + ".pdf");
 
-    return new ResponseEntity<>(bookContent, headers, HttpStatus.OK);
+    return new ResponseEntity<>(book.content(), headers, HttpStatus.OK);
   }
 }
