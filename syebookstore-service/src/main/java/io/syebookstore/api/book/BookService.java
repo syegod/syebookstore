@@ -5,6 +5,8 @@ import static io.syebookstore.api.Pageables.toPageable;
 import io.syebookstore.api.ServiceException;
 import io.syebookstore.api.book.repository.Book;
 import io.syebookstore.api.book.repository.BookRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class BookService {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(BookService.class);
+
   private final BookRepository bookRepository;
 
   public BookService(BookRepository bookRepository) {
@@ -20,7 +24,7 @@ public class BookService {
   }
 
   public Book uploadBook(UploadBookRequest request) {
-    return bookRepository.save(
+    final var book =
         new Book()
             .isbn(request.isbn())
             .title(request.title())
@@ -28,7 +32,11 @@ public class BookService {
             .publicationDate(request.publicationDate())
             .content(request.content())
             .authors(request.authors().toArray(String[]::new))
-            .tags(request.tags().toArray(String[]::new)));
+            .tags(request.tags().toArray(String[]::new));
+
+    LOGGER.info("Saving book: {}", book.title());
+
+    return bookRepository.save(book);
   }
 
   @Transactional(readOnly = true)
@@ -36,7 +44,11 @@ public class BookService {
     final var pageable = toPageable(request.offset(), request.limit(), request.orderBy());
 
     final var k = request.keyword() != null ? request.keyword() : "";
-    return bookRepository.findBooks(k, request.tags(), pageable);
+    final var bookPage = bookRepository.findBooks(k, request.tags(), pageable);
+
+    LOGGER.info("Getting book list: {}", bookPage);
+
+    return bookPage;
   }
 
   @Transactional(readOnly = true)
@@ -46,16 +58,9 @@ public class BookService {
       throw new ServiceException(404, "Book not found");
     }
 
-    return book;
-  }
-
-  @Transactional(readOnly = true)
-  public Book downloadBook(Long id) {
-    final var book = bookRepository.findById(id).orElse(null);
-    if (book == null) {
-      throw new ServiceException(404, "Book not found");
-    }
+    LOGGER.info("Getting book: {}", book);
 
     return book;
   }
+
 }

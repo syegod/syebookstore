@@ -9,6 +9,8 @@ import io.syebookstore.api.review.repository.ReviewRepository;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class ReviewService {
+
+  public static final Logger LOGGER = LoggerFactory.getLogger(ReviewService.class);
 
   private final ReviewRepository reviewRepository;
   private final BookRepository bookRepository;
@@ -33,14 +37,18 @@ public class ReviewService {
       throw new ServiceException(404, "Book not found");
     }
 
-    return reviewRepository.save(
+    final var review =
         new Review()
             .bookId(request.bookId())
             .accountId(accountId)
             .rating(request.rating())
             .message(request.message())
             .createdAt(now)
-            .updatedAt(now));
+            .updatedAt(now);
+
+    LOGGER.info("Saving review: {}", review);
+
+    return reviewRepository.save(review);
   }
 
   public Review updateReview(UpdateReviewRequest request, Long accountId) {
@@ -55,14 +63,22 @@ public class ReviewService {
       throw new ServiceException(403, "Not a review author");
     }
 
-    return reviewRepository.save(
-        review.rating(request.rating()).message(request.message()).updatedAt(now));
+    review.rating(request.rating()).message(request.message()).updatedAt(now);
+
+    LOGGER.info("Updating review: {}", review);
+
+    return reviewRepository.save(review);
   }
 
   public Page<Review> listReviews(ListReviewsRequest request) {
     final var pageable = toPageable(request.offset(), request.limit(), request.orderBy());
 
-    return reviewRepository.findByBookIdAndMessageContaining(
-        request.bookId(), request.keyword(), pageable);
+    final var reviewPage =
+        reviewRepository.findByBookIdAndMessageContaining(
+            request.bookId(), request.keyword(), pageable);
+
+    LOGGER.info("Getting review list: {}", reviewPage);
+
+    return reviewPage;
   }
 }

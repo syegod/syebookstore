@@ -9,12 +9,16 @@ import io.syebookstore.api.account.repository.AccountRepository;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class AccountService {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
 
   private final AccountRepository accountRepository;
   private final ServiceConfig serviceConfig;
@@ -38,6 +42,8 @@ public class AccountService {
             .createdAt(now)
             .updatedAt(now);
 
+    LOGGER.info("Creating account: {}", account);
+
     return accountRepository.save(account);
   }
 
@@ -54,7 +60,11 @@ public class AccountService {
       throw new ServiceException(400, "Login failed");
     }
 
-    return AuthUtils.createToken(serviceConfig.jwtSecret(), account.id());
+    final var token = AuthUtils.createToken(serviceConfig.jwtSecret(), account.id());
+
+    LOGGER.info("Creating jwt token: {}", token);
+
+    return token;
   }
 
   @Transactional(readOnly = true)
@@ -87,6 +97,11 @@ public class AccountService {
 
     // TODO: https://github.com/syegod/syebookstore/issues/4
     account.status(AccountStatus.CONFIRMED);
-    return account.updatedAt(LocalDateTime.now(Clock.systemUTC()).truncatedTo(ChronoUnit.MILLIS));
+
+    account.updatedAt(LocalDateTime.now(Clock.systemUTC()).truncatedTo(ChronoUnit.MILLIS));
+
+    LOGGER.info("Updating account: {}", account);
+
+    return account;
   }
 }

@@ -118,7 +118,7 @@ public class BookController {
   @PostMapping("/downloadBook")
   @Protected
   public ResponseEntity<byte[]> downloadBook(@RequestBody Long id) {
-    final var book = bookService.downloadBook(id);
+    final var book = bookService.getBook(id);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
