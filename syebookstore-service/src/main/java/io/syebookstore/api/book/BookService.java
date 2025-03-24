@@ -46,7 +46,7 @@ public class BookService {
     final var k = request.keyword() != null ? request.keyword() : "";
     final var bookPage = bookRepository.findBooks(k, request.tags(), pageable);
 
-    LOGGER.info("Getting book list: {}", bookPage);
+    LOGGER.info("Getting book list with total {} elements", bookPage.getTotalElements());
 
     return bookPage;
   }
@@ -58,7 +58,7 @@ public class BookService {
       throw new ServiceException(404, "Book not found");
     }
 
-    LOGGER.info("Getting book: {}", book);
+    LOGGER.info("Getting book: {}", book.title());
 
     return book;
   }

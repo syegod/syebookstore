@@ -49,6 +49,17 @@
       <scope>import</scope>
     </dependency>
 
+    <!-- JMH -->
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-generator-annprocess</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- JWT -->
     <dependency>
       <groupId>com.auth0</groupId>
