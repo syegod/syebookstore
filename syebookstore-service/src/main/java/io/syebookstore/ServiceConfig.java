@@ -9,6 +9,8 @@ public class ServiceConfig {
   private String dbUsername;
   private String dbPassword;
   private String jwtSecret;
+  private String smtpHost;
+  private int smtpPort;
 
   public static ServiceConfig fromSystemProperties() {
     final var port = getProperty("port");
@@ -16,13 +18,17 @@ public class ServiceConfig {
     final var dbUsername = getProperty("dbUsername");
     final var dbPassword = getProperty("dbPassword");
     final var jwtSecret = getProperty("jwtSecret");
+    final var smtpHost = getProperty("smtpHost");
+    final var smtpPort = getProperty("smtpPort");
 
     return new ServiceConfig()
         .port(Integer.parseInt(port))
         .dbUrl(dbUrl)
         .dbUsername(dbUsername)
         .dbPassword(dbPassword)
-        .jwtSecret(jwtSecret);
+        .jwtSecret(jwtSecret)
+        .smtpHost(smtpHost)
+        .smtpPort(Integer.parseInt(smtpPort));
   }
 
   public int port() {
@@ -70,6 +76,24 @@ public class ServiceConfig {
     return this;
   }
 
+  public String smtpHost() {
+    return smtpHost;
+  }
+
+  public ServiceConfig smtpHost(String smtpHost) {
+    this.smtpHost = smtpHost;
+    return this;
+  }
+
+  public int smtpPort() {
+    return smtpPort;
+  }
+
+  public ServiceConfig smtpPort(int smtpPort) {
+    this.smtpPort = smtpPort;
+    return this;
+  }
+
   private static String getProperty(String property) {
     return getProperty(property, false);
   }
@@ -90,6 +114,8 @@ public class ServiceConfig {
         .add("dbUsername='" + dbUsername + "'")
         .add("dbPassword='" + dbPassword + "'")
         .add("jwtSecret='" + jwtSecret + "'")
+        .add("smtpHost='" + smtpHost + "'")
+        .add("smtpPort='" + smtpPort + "'")
         .toString();
   }
 }

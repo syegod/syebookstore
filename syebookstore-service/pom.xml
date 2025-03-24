@@ -60,6 +60,12 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Mail -->
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>javax.mail</artifactId>
+    </dependency>
+
     <!-- JWT -->
     <dependency>
       <groupId>com.auth0</groupId>
