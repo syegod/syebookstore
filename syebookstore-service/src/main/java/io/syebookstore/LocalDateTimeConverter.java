@@ -6,8 +6,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Converter
-public class LocalDateTimeConverter
-    implements AttributeConverter<LocalDateTime, Timestamp> {
+public class LocalDateTimeConverter implements AttributeConverter<LocalDateTime, Timestamp> {
 
   @Override
   public Timestamp convertToDatabaseColumn(LocalDateTime locDateTime) {

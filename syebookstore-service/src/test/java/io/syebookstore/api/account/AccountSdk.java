@@ -9,5 +9,4 @@ public interface AccountSdk {
   AccountInfo getAccount(Long accountId);
 
   AccountInfo updateAccount(UpdateAccountRequest request);
-
 }
