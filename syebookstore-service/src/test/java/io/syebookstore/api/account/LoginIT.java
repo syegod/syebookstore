@@ -31,9 +31,7 @@ public class LoginIT {
   @MethodSource("testLoginFailedMethodSource")
   void testLoginFailed(FailedArgs args, ClientSdk clientSdk, AccountInfo accountInfo) {
     try {
-      clientSdk
-          .accountSdk()
-          .login(args.request);
+      clientSdk.accountSdk().login(args.request);
       fail("Expected exception");
     } catch (Exception ex) {
       assertError(ex, args.errorCode, args.errorMessage);
@@ -55,10 +53,7 @@ public class LoginIT {
   static Stream<FailedArgs> testLoginFailedMethodSource() {
     return Stream.of(
         new FailedArgs(
-            "Empty request",
-            new LoginRequest(),
-            400,
-            "Missing or invalid: username or email"),
+            "Empty request", new LoginRequest(), 400, "Missing or invalid: username or email"),
         new FailedArgs(
             "usernameOrEmail is empty string",
             new LoginRequest().usernameOrEmail("").password(randomAlphanumeric(10)),

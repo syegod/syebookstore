@@ -22,5 +22,4 @@ public class OrderBy {
     this.direction = direction;
     return this;
   }
-
 }
