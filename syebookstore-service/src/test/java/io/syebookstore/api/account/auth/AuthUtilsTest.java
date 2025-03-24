@@ -1,32 +1,49 @@
 package io.syebookstore.api.account.auth;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
-import java.util.concurrent.TimeUnit;
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Measurement;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Warmup;
-import org.openjdk.jmh.infra.Blackhole;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import io.syebookstore.api.account.AuthUtils;
+import org.junit.jupiter.api.Test;
 
-@BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
-@Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 10, time = 1, timeUnit = TimeUnit.SECONDS)
-public class AuthUtilsTest {
+class AuthUtilsTest {
 
-  @Benchmark
-  public void testMethod(Blackhole blackhole) {
+  @Test
+  void testJWTVerifyFailedWrongSecret() {
+    final var token = AuthUtils.createToken(randomAlphanumeric(10), Long.MAX_VALUE);
 
-    double sqrt = 0;
+    assertInstanceOf(String.class, token);
 
-    for (int i = 0; i < 1000; i++) {
-      sqrt = Math.sqrt(i);
+    try {
+      AuthUtils.verify(randomAlphanumeric(10), token);
+    } catch (Exception ex) {
+      assertInstanceOf(SignatureVerificationException.class, ex);
     }
-
-    blackhole.consume(sqrt);
   }
 
+  @Test
+  void testJWTVerificationFailed() {
+    try {
+      AuthUtils.verify("test12345", randomAlphanumeric(10));
+      fail("Expected exception");
+    } catch (Exception ex) {
+      assertInstanceOf(JWTDecodeException.class, ex);
+    }
+  }
+
+  @Test
+  void testJWT() {
+    final var secret = "test12345";
+    final var id = 123445L;
+
+    final var token = AuthUtils.createToken(secret, id);
+
+    assertInstanceOf(String.class, token);
+
+    final var verified = AuthUtils.verify(secret, token);
+    final var actualId = verified.getClaim("id").asLong();
+    assertEquals(id, actualId);
+  }
 }
