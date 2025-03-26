@@ -98,6 +98,7 @@ public class ListBooksIT {
     int n = 25;
     final var request = args.request;
     final var keyword = request.keyword();
+    final var tags = request.tags();
     final var offset = request.offset() != null ? request.offset() : 0;
     final var limit = request.limit() != null ? request.limit() : 50;
 
@@ -107,16 +108,24 @@ public class ListBooksIT {
                 v -> {
                   var l = nextLong();
                   return createBook(
-                      accountInfo, req -> req.title("title@" + l).description("description@" + l));
+                      accountInfo,
+                      req ->
+                          req.title("title@" + l)
+                              .description("description@" + l)
+                              .tags(List.of("tag@" + l)));
                 })
             .filter(
                 bookInfo -> {
                   if (keyword != null) {
                     return bookInfo.title().contains(keyword)
                         || bookInfo.description().contains(keyword);
-                  } else {
-                    return true;
                   }
+
+                  if (tags != null) {
+                    return bookInfo.tags().containsAll(tags);
+                  }
+
+                  return true;
                 })
             .sorted(args.comparator)
             .toList();
@@ -170,7 +179,16 @@ public class ListBooksIT {
               Comparator.<BookInfo, Long>comparing(BookInfo::id)));
     }
 
-    // TODO: https://github.com/syegod/syebookstore/issues/7
+    // Filter by tags
+
+    final String[] tags = {"tag@", "tag@1"};
+    for (String tag : tags) {
+      builder.add(
+          new SuccessArgs(
+              "Tag: " + tag,
+              new ListBooksRequest().tags(List.of(tag)),
+              Comparator.<BookInfo, Long>comparing(BookInfo::id)));
+    }
 
     // Pagination
 
