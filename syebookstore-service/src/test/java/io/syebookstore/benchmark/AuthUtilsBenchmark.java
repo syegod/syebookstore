@@ -22,7 +22,7 @@ import org.openjdk.jmh.infra.Blackhole;
 @Fork(1)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
-public class SumBenchmark {
+public class AuthUtilsBenchmark {
 
   private static final String SECRET = "test12345";
 

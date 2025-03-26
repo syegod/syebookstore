@@ -5,6 +5,6 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 public class BenchmarkRunner {
   public static void main(String[] args) throws Exception {
-    new Runner(new OptionsBuilder().include("SumBenchmark").build()).run();
+    new Runner(new OptionsBuilder().include("AuthUtilsBenchmark").build()).run();
   }
 }
