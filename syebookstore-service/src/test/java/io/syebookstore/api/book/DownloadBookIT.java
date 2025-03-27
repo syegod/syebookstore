@@ -45,4 +45,14 @@ public class DownloadBookIT {
 
     assertArrayEquals(bookInfo.content(), bookContent);
   }
+
+  @Test
+  void testDownloadLargeBook(ClientSdk clientSdk, AccountInfo accountInfo) {
+    login(clientSdk, accountInfo);
+    final var bookInfo = createBook(accountInfo, request -> request.content(new byte[20000000]));
+
+    final var bookContent = clientSdk.bookSdk().downloadBook(bookInfo.id());
+
+    assertArrayEquals(bookInfo.content(), bookContent);
+  }
 }
