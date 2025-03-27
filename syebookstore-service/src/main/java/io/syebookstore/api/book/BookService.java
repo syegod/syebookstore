@@ -43,8 +43,18 @@ public class BookService {
   public Page<Book> listBooks(ListBooksRequest request) {
     final var pageable = toPageable(request.offset(), request.limit(), request.orderBy());
 
-    final var k = request.keyword() != null ? request.keyword() : "";
-    final var bookPage = bookRepository.findBooks(k, request.tags(), pageable);
+    final var keyword = request.keyword() != null ? request.keyword() : "";
+    final var tags =
+        request.tags() != null && !request.tags().isEmpty()
+            ? request.tags().toArray(String[]::new)
+            : null;
+
+    Page<Book> bookPage;
+    if (tags == null) {
+      bookPage = bookRepository.findBooks(keyword, pageable);
+    } else {
+      bookPage = bookRepository.findBooksWithTags(keyword, tags, pageable);
+    }
 
     LOGGER.info("Getting book list with total {} elements", bookPage.getTotalElements());
 
@@ -62,5 +72,4 @@ public class BookService {
 
     return book;
   }
-
 }

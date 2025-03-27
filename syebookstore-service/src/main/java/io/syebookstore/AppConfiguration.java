@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.util.Properties;
+import javax.mail.Session;
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,5 +34,13 @@ public class AppConfiguration {
     objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
     objectMapper.registerModule(new JavaTimeModule());
     return objectMapper;
+  }
+
+  @Bean
+  public Session mailSession(ServiceConfig serviceConfig) {
+    final var properties = new Properties();
+    properties.put("mail.smtp.host", serviceConfig.smtpHost());
+    properties.put("mail.smtp.port", serviceConfig.smtpPort());
+    return Session.getInstance(properties);
   }
 }
