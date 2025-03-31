@@ -29,7 +29,7 @@ The application follows the **RESTful** architectural style where clients commun
 ### Key Components:
 1. **Spring Boot**: Handles the core application logic, including request routing and business logic.
 2. **Spring Data JPA**: Simplifies database interaction, using **Hibernate** as the ORM for mapping objects to PostgreSQL.
-3. **PostgreSQL**: Ensures reliable storage for books, users, reviews, and other data.
+3. **PostgreSQL**: Ensures reliable storage for books, users and reviews.
 4. **Liquibase**: Ensures that the database schema is managed in a version-controlled manner.
 5. **Testcontainers**: Allows integration testing by spinning up containerized PostgreSQL databases for tests.
 6. **Custom Authentication & Authorization**: Ensures that users can only access the data and resources they’re authorized for.
