@@ -2,7 +2,7 @@
 
 ## Overview
 
-The **Syebookstore** is a full-featured REST API that allows users to manage accounts, browse and manage book information, upload and download books in PDF format, and manage user reviews. The system uses a robust, scalable backend powered by Spring Boot and integrates with a PostgreSQL database for persistence.
+**Syebookstore** is a full-featured REST API that allows users to manage accounts, browse and manage book information, upload and download books in PDF format, and manage user reviews. The system uses a robust, scalable backend powered by Spring Boot and integrates with a PostgreSQL database for persistence.
 
 ## Features
 
